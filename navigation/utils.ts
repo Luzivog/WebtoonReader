@@ -32,37 +32,9 @@ export async function loadMainWebtoons(): Promise<Webtoon[]> {
 	return mainWebtoons;
 }
 
-export async function fetchWebtoonDetails(webtoon: Webtoon): Promise<void> {
-
-	const [htmlDetails, htmlChapters] = await Promise.all([fetchHtmlRes('https://www.mangageko.com'+webtoon.apiUrl), fetchHtmlRes('https://www.mangageko.com'+webtoon.apiUrl+'all-chapters/')]);
-	const [parsedDetails, parsedChapters] = [parse(htmlDetails).removeWhitespace(), parse(htmlChapters).removeWhitespace()];
-
-	const stats = parsedDetails.querySelector('div[class="header-stats"]');
-	if (stats == null) webtoon.details = config.defaultDetails;
-	else {
-		const statNodes = stats.childNodes;
-		let lastChapter = (statNodes[0]  as HTMLElement).firstChild.innerText.split(' ')[1].split('-')[0];
-		if (lastChapter[0] == '0' && lastChapter.length > 1) lastChapter = lastChapter.slice(1); 
-		let views = (statNodes[1]  as HTMLElement).firstChild.innerText.split(' ').slice(1).join(' ');
-		let bookmarks = (statNodes[2]  as HTMLElement).firstChild.innerText.split(' ').slice(1).join(' ');
-		let status = (statNodes[3]  as HTMLElement).firstChild.innerText;
-		let summaryNodes = parsedDetails.querySelector('p[class="description"]');
-		let summary = (summaryNodes ? summaryNodes.childNodes.slice(1).map(n => n.innerText) : [config.defaultDetails.summary]).join('\n').trim();
-		if (summary == config.defaultDetails.summary) {
-			const matchDesc = htmlDetails.match(/<p class="description">(.*?)<\/p>/s);
-			if (matchDesc) summary = matchDesc[1].trim().split("\n").slice(1).join(' ').replaceAll("\r", '').replaceAll("<br>", "\n").trim();
-		};
-		webtoon.details = {
-			lastChapter: lastChapter,
-			views: views,
-			bookmarks: bookmarks,
-			status: status,
-			summary: summary,
-		}
-	}
-
-	const chaptersElements = parsedChapters.querySelectorAll('strong[class="chapter-title"]');
-	const chapterUrls = parsedChapters.querySelectorAll('li[data-chapterno]');
+export async function updateWebtoonChapters(webtoon: Webtoon, parsedHtml: HTMLElement): Promise<void> {
+	const chaptersElements = parsedHtml.querySelectorAll('strong[class="chapter-title"]');
+	const chapterUrls = parsedHtml.querySelectorAll('li[data-chapterno]');
     const chapterDetails = [];
 
 	for (let i=0;i<chaptersElements.length;i++) {
@@ -73,7 +45,49 @@ export async function fetchWebtoonDetails(webtoon: Webtoon): Promise<void> {
 		})
 	}
 
-	webtoon.chapters = chapterDetails;
+	webtoon.chapters = [...chapterDetails];
+}
+
+export async function fetchWebtoonDetails(webtoon: Webtoon): Promise<void> {
+	// fetchHtmlRes('https://www.mangageko.com'+webtoon.apiUrl+'all-chapters/')
+
+	const htmlDetails = await fetchHtmlRes('https://www.mangageko.com'+webtoon.apiUrl);
+	const parsedDetails= parse(htmlDetails).removeWhitespace();
+
+	const stats = parsedDetails.querySelector('div[class="header-stats"]');
+	if (stats == null) { webtoon.details = config.defaultDetails; return; };
+
+	const statNodes = stats.childNodes;
+	let lastChapter = (statNodes[0] as HTMLElement).firstChild.innerText.split(' ')[1].split('-')[0];
+	
+	if (lastChapter[0] == '0' && lastChapter.length > 1) lastChapter = lastChapter.slice(1); 
+	
+	let views = (statNodes[1] as HTMLElement).firstChild.innerText.split(' ').slice(1).join(' ');
+	let bookmarks = (statNodes[2] as HTMLElement).firstChild.innerText.split(' ').slice(1).join(' ');
+	let status = (statNodes[3] as HTMLElement).firstChild.innerText;
+	let summaryNodes = parsedDetails.querySelector('p[class="description"]');
+	let summary = (summaryNodes ? summaryNodes.childNodes.slice(1).map(n => n.innerText) : [config.defaultDetails.summary]).join('\n').trim();
+	
+	if (summary == config.defaultDetails.summary) {
+		const matchDesc = htmlDetails.match(/<p class="description">(.*?)<\/p>/s);
+		if (matchDesc) summary = matchDesc[1].trim().split("\n").slice(1).join(' ').replaceAll("\r", '').replaceAll("<br>", "\n").trim();
+	};
+
+	webtoon.details = {
+		lastChapter: lastChapter,
+		views: views,
+		bookmarks: bookmarks,
+		status: status,
+		summary: summary,
+	}
+
+	updateWebtoonChapters(webtoon, parsedDetails);
+}
+
+export async function fetchAllChapters(webtoon: Webtoon) {
+	const htmlDetails = await fetchHtmlRes('https://www.mangageko.com'+webtoon.apiUrl+'all-chapters/');
+	const parsedDetails= parse(htmlDetails).removeWhitespace();
+	updateWebtoonChapters(webtoon, parsedDetails);
 }
 
 export async function fetchChapterImageUrls(webtoon: Webtoon, chapter: {name: string, released: string, url: string}): Promise<any[]> {
