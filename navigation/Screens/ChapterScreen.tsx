@@ -17,7 +17,7 @@ export default function ChapterScreen({ navigation, route }: {
     const [isLoading, setIsLoading] = useState(true);
     const [imageData, setImageData] = useState<Array<{uri: string, width: number, height: number}>>([]);
 
-	useEffect(() => {
+    useEffect(() => {
 		(async () => {
             const urls = await fetchChapterImageUrls(webtoon, chapter);
             setIsLoading(false);
@@ -37,6 +37,7 @@ export default function ChapterScreen({ navigation, route }: {
 
     return (
         <FlatList
+			showsVerticalScrollIndicator= {false}
             data={imageData}
             renderItem={({ item }) => {
                 const scaleFactor = screenWidth / item.width;
@@ -45,7 +46,6 @@ export default function ChapterScreen({ navigation, route }: {
                     <FastImage 
                         source={{ uri: item.uri }} 
                         style={{ width: screenWidth, height: imageHeight }} 
-                        resizeMode="contain" 
                     />
                 );
             }}

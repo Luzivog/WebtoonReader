@@ -29,7 +29,7 @@ export default function WebtoonStack({navigation}: {navigation: any}): JSX.Eleme
                 navigation.getParent().setOptions({
                     tabBarStyle: { 
                         backgroundColor: 'black', 
-                        display: 'none' 
+                        height: 0 
                     }
                 })
               }
@@ -37,7 +37,7 @@ export default function WebtoonStack({navigation}: {navigation: any}): JSX.Eleme
                 navigation.getParent().setOptions({
                     tabBarStyle: { 
                         backgroundColor: 'black', 
-                        height: 60 
+                        height: 60
                     }
                 })
               };

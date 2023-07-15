@@ -9,6 +9,7 @@ import BookmarksScreen from './Screens/BookmarksScreen';
 import DownloadsScreens from './Screens/DownloadsScreen';
 import HomeContainer from './stacks/HomeStack';
 import { config } from './config';
+import { View } from 'react-native';
 
 //Screen names
 const homeName = "Home";
@@ -20,34 +21,38 @@ const Tab = createBottomTabNavigator();
 
 function MainContainer() {
 	return (
-		<NavigationContainer theme={config.CustomDarkTheme}>
-			<Tab.Navigator
-				initialRouteName={homeName}
-				screenOptions={({ route }) => ({
-					headerShown: false,
-					tabBarStyle: [{ backgroundColor: 'black', height: 60 }],
-					tabBarActiveTintColor: 'tomato',
-					tabBarIcon: ({ focused, color, size }) => {
-						let iconName;
-						let rn = route.name;
+		<View style={{width: '100%', height: '100%',backgroundColor: 'black'}}>
 
-						if (rn === homeName) iconName = focused ? 'home' : 'home-outline';
-						else if (rn === searchName) iconName = focused ? 'search' : 'search-outline';
-						else if (rn === bookmarksName) iconName = focused ? 'bookmarks' : 'bookmarks-outline';
-						else iconName = focused ? 'download' : 'download-outline';
+			<NavigationContainer theme={config.CustomDarkTheme}>
+				<Tab.Navigator
+					initialRouteName={homeName}
+					screenOptions={({ route }) => ({
+						headerShown: false,
+						tabBarStyle: [{ backgroundColor: 'black', height: 60 }],
+						tabBarActiveTintColor: 'tomato',
+						tabBarIcon: ({ focused, color, size }) => {
+							let iconName;
+							let rn = route.name;
 
-						return <Ionicons name={iconName} size={size} color={color} />;
-					},
-				})}
-			>
+							if (rn === homeName) iconName = focused ? 'home' : 'home-outline';
+							else if (rn === searchName) iconName = focused ? 'search' : 'search-outline';
+							else if (rn === bookmarksName) iconName = focused ? 'bookmarks' : 'bookmarks-outline';
+							else iconName = focused ? 'download' : 'download-outline';
 
-				<Tab.Screen name={homeName} component={HomeContainer} />
-				<Tab.Screen name={searchName} component={SearchScreen} />
-				<Tab.Screen name={bookmarksName} component={BookmarksScreen} />
-				<Tab.Screen name={downloadsName} component={DownloadsScreens} />
+							return <Ionicons name={iconName} size={size} color={color} />;
+						},
+					})}
+				>
 
-			</Tab.Navigator>
-		</NavigationContainer>
+					<Tab.Screen name={homeName} component={HomeContainer} />
+					<Tab.Screen name={searchName} component={SearchScreen} />
+					<Tab.Screen name={bookmarksName} component={BookmarksScreen} />
+					<Tab.Screen name={downloadsName} component={DownloadsScreens} />
+
+				</Tab.Navigator>
+			</NavigationContainer>
+			
+		</View>
 	);
 }
 
