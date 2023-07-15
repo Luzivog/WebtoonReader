@@ -19,9 +19,31 @@ export type ChapterScreenRouteProp = RouteProp<RootStackParamList, 'ChapterScree
 
 const Stack = createStackNavigator<RootStackParamList>();
 
-export default function WebtoonStack(): JSX.Element {
+export default function WebtoonStack({navigation}: {navigation: any}): JSX.Element {
     return (
-        <Stack.Navigator initialRouteName='WebtoonDetailsScreen'>
+        <Stack.Navigator 
+        initialRouteName='WebtoonDetailsScreen'
+        screenListeners={{
+            state: (e) => {
+              if (e && e.data && (e.data as {state:{index: number}}).state.index == 1) {
+                navigation.getParent().setOptions({
+                    tabBarStyle: { 
+                        backgroundColor: 'black', 
+                        display: 'none' 
+                    }
+                })
+              }
+              else {
+                navigation.getParent().setOptions({
+                    tabBarStyle: { 
+                        backgroundColor: 'black', 
+                        height: 60 
+                    }
+                })
+              };
+            },
+          }}
+        >
             <Stack.Screen
                 name="WebtoonDetailsScreen"
                 component={WebtoonDetailsScreen}

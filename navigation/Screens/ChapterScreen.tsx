@@ -1,8 +1,11 @@
 import { FlatList, Image, Dimensions } from "react-native";
 import { ChapterScreenNavigationProp, ChapterScreenRouteProp } from "../stacks/WebtoonStack";
 import { useState, useEffect } from "react";
+import FastImage from 'react-native-fast-image'
 import { fetchChapterImageUrls } from "../utils";
 import LoadingScreen from "./LoadingScreen";
+
+const screenWidth = Dimensions.get('window').width;
 
 export default function ChapterScreen({ navigation, route }: {
 	navigation: ChapterScreenNavigationProp,
@@ -12,33 +15,41 @@ export default function ChapterScreen({ navigation, route }: {
     const { webtoon, chapter } = route.params;
 
     const [isLoading, setIsLoading] = useState(true);
-    const [imageUrls, setImageUrls] = useState<Array<string>>([]);
+    const [imageData, setImageData] = useState<Array<{uri: string, width: number, height: number}>>([]);
 
 	useEffect(() => {
 		(async () => {
-			if (imageUrls.length == 0) {
-                const urls = await fetchChapterImageUrls(webtoon, chapter);
-                setImageUrls(urls);
-                setIsLoading(false);
-            };
+            const urls = await fetchChapterImageUrls(webtoon, chapter);
+            setIsLoading(false);
+
+            for (const url of urls) {
+                await new Promise((resolve, reject) => {
+                    Image.getSize(url, (width, height) => {
+                        setImageData((prevData) => [...prevData, {uri: url, width, height}]);
+                        resolve(null);
+                    }, reject);
+                });
+            }
 		})();
 	}, [webtoon, chapter]);
 
-	if (isLoading) return <LoadingScreen/>;
-
-    const screenWidth = Dimensions.get('window').width;
+    if (isLoading) return <LoadingScreen/>;
 
     return (
         <FlatList
-          data={imageUrls}
-          renderItem={({ item }) => (
-            <Image 
-                source={{ uri: item }} 
-                style={{ width: screenWidth, flex: 1 }} 
-                resizeMode="contain" 
-            />
-          )}
-          keyExtractor={(item, index) => index.toString()}
+            data={imageData}
+            renderItem={({ item }) => {
+                const scaleFactor = screenWidth / item.width;
+                const imageHeight = item.height * scaleFactor;
+                return (
+                    <FastImage 
+                        source={{ uri: item.uri }} 
+                        style={{ width: screenWidth, height: imageHeight }} 
+                        resizeMode="contain" 
+                    />
+                );
+            }}
+            keyExtractor={(item, index) => index.toString()}
         />
-      );
+    );
 }
