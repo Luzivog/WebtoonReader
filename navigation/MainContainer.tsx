@@ -7,9 +7,10 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import SearchScreen from './Screens/SearchScreen';
 import BookmarksScreen from './Screens/BookmarksScreen';
 import DownloadsScreens from './Screens/DownloadsScreen';
-import HomeContainer from './stacks/HomeStack';
+import HomeStack from './stacks/HomeStack';
 import { config } from './config';
-import { View } from 'react-native';
+import { StatusBar, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 //Screen names
 const homeName = "Home";
@@ -21,7 +22,8 @@ const Tab = createBottomTabNavigator();
 
 function MainContainer() {
 	return (
-		<View style={{width: '100%', height: '100%',backgroundColor: 'black'}}>
+		<View style={{width: '100%', height: '100%',backgroundColor: '#252525'}}>
+			<StatusBar translucent={true} backgroundColor={'transparent'} />
 
 			<NavigationContainer theme={config.CustomDarkTheme}>
 				<Tab.Navigator
@@ -44,7 +46,7 @@ function MainContainer() {
 					})}
 				>
 
-					<Tab.Screen name={homeName} component={HomeContainer} />
+					<Tab.Screen name={homeName} component={HomeStack} />
 					<Tab.Screen name={searchName} component={SearchScreen} />
 					<Tab.Screen name={bookmarksName} component={BookmarksScreen} />
 					<Tab.Screen name={downloadsName} component={DownloadsScreens} />

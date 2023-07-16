@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ListRenderItem } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
 import { WebtoonDetailsScreenNavigationProp, WebtoonDetailsScreenRouteProp } from '../stacks/WebtoonStack';
 import isObjectEmpty, { fetchAllChapters, fetchWebtoonDetails } from '../utils';
 import { FlatList } from 'react-native-gesture-handler';
@@ -34,18 +34,17 @@ const WebtoonDetailsScreen = ({ navigation, route }: {
   const { webtoon } = route.params;
   const [isLoading, setIsLoading] = useState(true);
   const [isPopupVisible, setPopupVisible] = useState(false);
-  const [chapters, setChapters] = useState(webtoon.chapters);  // new state for chapters
+  const [chapters, setChapters] = useState(webtoon.chapters);  
 
   const fetchDetails = useCallback(async () => {
-    if (isObjectEmpty(webtoon.details)) {
-      await fetchWebtoonDetails(webtoon);
-    } else {
-      await fetchAllChapters(webtoon);
-    }
-    setChapters(webtoon.chapters); // Update chapters state
-    setIsLoading(false);
-    console.log(webtoon.chapters.length);
-  }, [webtoon.details]);
+
+		if (isObjectEmpty(webtoon.details)) await fetchWebtoonDetails(webtoon);
+		else await fetchAllChapters(webtoon);
+
+		setChapters(webtoon.chapters);
+		setIsLoading(false);
+
+	}, [webtoon.details]);
 
   useEffect(() => {
     fetchDetails();
@@ -74,6 +73,7 @@ const WebtoonDetailsScreen = ({ navigation, route }: {
 
 const styles = StyleSheet.create({
   chaptersContainer: {
+	marginTop: StatusBar.currentHeight,
     marginHorizontal: 10,
   },
   chapterItem: {

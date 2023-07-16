@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, StatusBar } from 'react-native';
 import Webtoon from '../Webtoon';
 import { loadMainWebtoons } from '../utils';
 import WebtoonCards from './components/WebtoonCards';
@@ -42,6 +42,7 @@ export default function HomeScreen({navigation}: {
 
 const styles = StyleSheet.create({
     container: {
+        marginTop: StatusBar.currentHeight,
         flex: 1,
         backgroundColor: '#252525',
     },
