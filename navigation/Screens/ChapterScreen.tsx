@@ -1,4 +1,4 @@
-import { FlatList, Image, Dimensions } from "react-native";
+import { FlatList, Image, Dimensions, StatusBar, View} from "react-native";
 import { ChapterScreenNavigationProp, ChapterScreenRouteProp } from "../stacks/WebtoonStack";
 import { useState, useEffect } from "react";
 import FastImage from 'react-native-fast-image'
@@ -11,7 +11,6 @@ export default function ChapterScreen({ navigation, route }: {
 	navigation: ChapterScreenNavigationProp,
 	route: ChapterScreenRouteProp
 }) {
-
     const { webtoon, chapter } = route.params;
 
     const [isLoading, setIsLoading] = useState(true);
@@ -36,20 +35,23 @@ export default function ChapterScreen({ navigation, route }: {
     if (isLoading) return <LoadingScreen/>;
 
     return (
-        <FlatList
-			showsVerticalScrollIndicator= {false}
-            data={imageData}
-            renderItem={({ item }) => {
-                const scaleFactor = screenWidth / item.width;
-                const imageHeight = item.height * scaleFactor;
-                return (
-                    <FastImage 
-                        source={{ uri: item.uri }} 
-                        style={{ width: screenWidth, height: imageHeight }} 
-                    />
-                );
-            }}
-            keyExtractor={(item, index) => index.toString()}
-        />
+        <View>
+            <StatusBar hidden/>
+            <FlatList
+                showsVerticalScrollIndicator= {false}
+                data={imageData}
+                renderItem={({ item }) => {
+                    const scaleFactor = screenWidth / item.width;
+                    const imageHeight = item.height * scaleFactor;
+                    return (
+                        <FastImage 
+                            source={{ uri: item.uri }} 
+                            style={{ width: screenWidth, height: imageHeight }} 
+                        />
+                    );
+                }}
+                keyExtractor={(item, index) => index.toString()}
+            />
+        </View>
     );
 }

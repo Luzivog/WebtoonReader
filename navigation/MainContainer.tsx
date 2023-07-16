@@ -23,8 +23,7 @@ const Tab = createBottomTabNavigator();
 function MainContainer() {
 	return (
 		<View style={{width: '100%', height: '100%',backgroundColor: '#252525'}}>
-			<StatusBar translucent={true} backgroundColor={'transparent'} />
-
+		<StatusBar translucent backgroundColor='transparent' />
 			<NavigationContainer theme={config.CustomDarkTheme}>
 				<Tab.Navigator
 					initialRouteName={homeName}
