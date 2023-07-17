@@ -56,7 +56,7 @@ export default function ChapterScreen({ navigation, route }: {
             </WebView>
 
             {overlayVisible && (
-                <ChapterScreenOverlay navigation={navigation} route={route}/>
+                <ChapterScreenOverlay navigation={navigation} webtoon={webtoon} chapter={chapter}/>
             )}
 
         </View>

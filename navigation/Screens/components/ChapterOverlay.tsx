@@ -1,32 +1,47 @@
-import { View, TouchableOpacity, StyleSheet } from "react-native";
+import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { ChapterScreenNavigationProp, ChapterScreenRouteProp } from "../../stacks/WebtoonStack";
 import { config } from "../../config";
+import Webtoon from "../../Webtoon";
 
-export default function ChapterScreenOverlay({ navigation, route }: {
+export default function ChapterScreenOverlay({ navigation, webtoon, chapter }: {
     navigation: ChapterScreenNavigationProp,
-    route: ChapterScreenRouteProp
+    webtoon: Webtoon,
+    chapter: {name: string, released: string, url: string}
 }) {
+    const chapterIndex = webtoon.chapters.indexOf(chapter);
+
+    const NavigationButton = ({ iconName, direction }: {iconName: string, direction: string}) => {
+        const isButtonVisible = direction === 'next'
+            ? chapterIndex != webtoon.chapters.length - 1
+            : chapterIndex > 0;
+
+        const navigateTo = direction === 'next'
+            ? webtoon.chapters[chapterIndex + 1]
+            : webtoon.chapters[chapterIndex - 1];
+
+        return isButtonVisible && (
+            <TouchableOpacity onPress={() => navigation.navigate("ChapterScreen", { webtoon, chapter: navigateTo })}>
+                <Ionicons name={iconName} style={styles.icon}/>
+            </TouchableOpacity>
+        );
+    }
 
     return (
         <View style={styles.overlay}>
             <View style={styles.topBar}>
                 <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Ionicons name="list" style={[styles.icon, {marginTop: config.StatusBarHeight}]} />
+                    <Ionicons name="list" style={styles.icon} />
                 </TouchableOpacity>
+                <Text numberOfLines={1} ellipsizeMode='tail' style={styles.chapterTitle}>{chapter.name}</Text>
             </View>
             <View style={styles.bottomBar}>
-                <TouchableOpacity onPress={() => { /* Add left arrow functionality here */ }}>
-                    <Ionicons name="caret-back" style={styles.icon}/>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => { /* Add right arrow functionality here */ }}>
-                    <Ionicons name="caret-forward" style={styles.icon}/>
-                </TouchableOpacity>
+                <NavigationButton iconName="caret-back" direction="next" />
+                <NavigationButton iconName="caret-forward" direction="previous" />
             </View>
         </View>
     )
 }
-
 
 const styles = StyleSheet.create({
     overlay: {
@@ -38,10 +53,18 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     topBar: {
+        flexDirection: 'row',
+        alignItems: 'center',
         height: config.StatusBarHeight + 50,
         backgroundColor: '#252525',
-        justifyContent: 'center',
         paddingLeft: 15,
+        paddingTop: config.StatusBarHeight,
+    },
+    chapterTitle: {
+        marginLeft: 20,
+        fontSize: 18,
+        color: 'white',
+        flex: 1,
     },
     bottomBar: {
         flexDirection: 'row',
@@ -51,12 +74,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#252525',
         paddingLeft: 15,
         paddingRight: 15,
-    },
-    clickableArea: {
-        position: 'absolute',
-        width: "100%",
-        height: "100%",
-        backgroundColor: 'transparent',
     },
     icon: {
         fontSize: 35,
