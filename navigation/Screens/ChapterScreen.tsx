@@ -1,24 +1,29 @@
-import { Dimensions, StatusBar, View} from "react-native";
+import { Dimensions, StatusBar, View, TouchableOpacity, StyleSheet } from "react-native";
 import { ChapterScreenNavigationProp, ChapterScreenRouteProp } from "../stacks/WebtoonStack";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import WebView from 'react-native-webview';
 import { fetchChapterImageUrls } from "../utils";
 import LoadingScreen from "./LoadingScreen";
+import ChapterScreenOverlay from "./components/ChapterOverlay";
 
-
-const screenWidth = Dimensions.get('window').width;
+const injectScript = `
+document.body.addEventListener('click', function(e) {
+    window.ReactNativeWebView.postMessage('You clicked inside WebView');
+});
+`;
 
 export default function ChapterScreen({ navigation, route }: {
-	navigation: ChapterScreenNavigationProp,
-	route: ChapterScreenRouteProp
-}) {
+    navigation: ChapterScreenNavigationProp,
+    route: ChapterScreenRouteProp
+}) {    
     const { webtoon, chapter } = route.params;
 
     const [isLoading, setIsLoading] = useState(true);
     const [html, setHtml] = useState("");
+    const [overlayVisible, setOverlayVisible] = useState(false);
 
     useEffect(() => {
-		(async () => {
+        (async () => {
             const urls = await fetchChapterImageUrls(webtoon, chapter);
 
             let localHtml = `<html>`
@@ -28,23 +33,48 @@ export default function ChapterScreen({ navigation, route }: {
 
             setHtml(localHtml);
             setIsLoading(false);
-		})();
-	}, [webtoon, chapter]);
+        })();
+    }, [webtoon, chapter]);
 
     if (isLoading) return <LoadingScreen/>;
 
     return (
-        <View style={{width: "100%", height: "100%"}}>
-            <StatusBar hidden/>
+        <View style={styles.container}>
+            <StatusBar hidden={!overlayVisible}/>
             <WebView 
+                injectedJavaScript={injectScript}
+                onMessage={() => setOverlayVisible(!overlayVisible)}
                 source={{html:html}}
-                style={{width: screenWidth}}
+                style={styles.webView}
                 scalesPageToFit={true}
                 bounces={false}
                 scrollEnabled={true}
                 showsHorizontalScrollIndicator={false}
                 showsVerticalScrollIndicator={false}
-            />
+                onAccessibilityTap={() => console.log("hoi")}
+            >
+            </WebView>
+
+            {overlayVisible && (
+                <ChapterScreenOverlay navigation={navigation} route={route}/>
+            )}
+
         </View>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        width: "100%",
+        height: "100%",
+    },
+    webView: {
+        width: Dimensions.get('window').width,
+    },
+    clickableArea: {
+        position: 'absolute',
+        width: "100%",
+        height: "100%",
+        backgroundColor: 'transparent',
+    },
+});

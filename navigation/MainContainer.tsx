@@ -10,7 +10,6 @@ import DownloadsScreens from './Screens/DownloadsScreen';
 import HomeStack from './stacks/HomeStack';
 import { config } from './config';
 import { StatusBar, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 //Screen names
 const homeName = "Home";

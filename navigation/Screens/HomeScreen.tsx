@@ -9,7 +9,7 @@ import { HomeScreenNavigationProp } from '../stacks/HomeStack';
 export default function HomeScreen({navigation}: {
         navigation: HomeScreenNavigationProp, 
     }): JSX.Element {
-        
+                
     const [webtoons, setWebtoons] = useState<Webtoon[]>([]);
 
     useEffect(() => {

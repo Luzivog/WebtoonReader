@@ -1,4 +1,5 @@
 import { DarkTheme } from "@react-navigation/native"
+import { StatusBar } from "react-native"
 
 export const config = {
     defaultTitle: "Error: Could not get title",
@@ -15,4 +16,5 @@ export const config = {
         colors: {
           ...DarkTheme.colors, background: '#252525'},
     },
+    StatusBarHeight: StatusBar.currentHeight ? StatusBar.currentHeight : 0
 }

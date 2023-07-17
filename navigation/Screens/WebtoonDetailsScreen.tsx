@@ -31,6 +31,7 @@ const WebtoonDetailsScreen = ({ navigation, route }: {
   navigation: WebtoonDetailsScreenNavigationProp,
   route: WebtoonDetailsScreenRouteProp
 }) => {
+
   const { webtoon } = route.params;
   const [isLoading, setIsLoading] = useState(true);
   const [isPopupVisible, setPopupVisible] = useState(false);
