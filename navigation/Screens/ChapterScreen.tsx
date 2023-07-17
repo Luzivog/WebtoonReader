@@ -1,11 +1,9 @@
-import { FlatList, Image, Dimensions, StatusBar, View, ScrollView} from "react-native";
+import { Dimensions, StatusBar, View} from "react-native";
 import { ChapterScreenNavigationProp, ChapterScreenRouteProp } from "../stacks/WebtoonStack";
 import { useState, useEffect } from "react";
-import FastImage from 'react-native-fast-image';
 import WebView from 'react-native-webview';
 import { fetchChapterImageUrls } from "../utils";
 import LoadingScreen from "./LoadingScreen";
-import AutoHeightWebView from 'react-native-autoheight-webview'
 
 
 const screenWidth = Dimensions.get('window').width;
@@ -25,7 +23,7 @@ export default function ChapterScreen({ navigation, route }: {
 
             let localHtml = `<html>`
             localHtml += "<body style='margin: 0 !important;padding: 0 !important;'>";
-            for (let url of urls) localHtml+="<img style='width: 100%' src='"+url+"'>"
+            for (let url of urls) localHtml+="<div style='width: 100%;'><img style='width: 100%; height: auto;' src='"+url+"'></div>"
             localHtml += "</body></html>";
 
             setHtml(localHtml);
@@ -38,14 +36,15 @@ export default function ChapterScreen({ navigation, route }: {
     return (
         <View style={{width: "100%", height: "100%"}}>
             <StatusBar hidden/>
-
-            <AutoHeightWebView
+            <WebView 
                 source={{html:html}}
-                style={{width: Dimensions.get('window').width}}
-                scrollEnabled={true}
+                style={{width: screenWidth}}
+                scalesPageToFit={true}
                 bounces={false}
+                scrollEnabled={true}
+                showsHorizontalScrollIndicator={false}
+                showsVerticalScrollIndicator={false}
             />
-
         </View>
     );
 }
