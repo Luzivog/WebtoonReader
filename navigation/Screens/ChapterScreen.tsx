@@ -23,7 +23,7 @@ export default function ChapterScreen({ navigation, route }: {
 		(async () => {
             const urls = await fetchChapterImageUrls(webtoon, chapter);
 
-            let localHtml = `<html><head><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /></head>`
+            let localHtml = `<html>`
             localHtml += "<body style='margin: 0 !important;padding: 0 !important;'>";
             for (let url of urls) localHtml+="<img style='width: 100%' src='"+url+"'>"
             localHtml += "</body></html>";
@@ -36,14 +36,16 @@ export default function ChapterScreen({ navigation, route }: {
     if (isLoading) return <LoadingScreen/>;
 
     return (
-        <View>
+        <View style={{width: "100%", height: "100%"}}>
             <StatusBar hidden/>
-            <ScrollView showsVerticalScrollIndicator={false}>
-                <AutoHeightWebView
-                    source={{html:html}}
-                    style={{width: Dimensions.get('window').width}}
-                />
-            </ScrollView>
+
+            <AutoHeightWebView
+                source={{html:html}}
+                style={{width: Dimensions.get('window').width}}
+                scrollEnabled={true}
+                bounces={false}
+            />
+
         </View>
     );
 }
