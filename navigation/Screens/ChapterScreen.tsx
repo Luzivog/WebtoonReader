@@ -1,4 +1,4 @@
-import { Dimensions, StatusBar, View, TouchableOpacity, StyleSheet } from "react-native";
+import { Dimensions, StatusBar, View, StyleSheet } from "react-native";
 import { ChapterScreenNavigationProp, ChapterScreenRouteProp } from "../stacks/WebtoonStack";
 import React, { useState, useEffect } from "react";
 import WebView from 'react-native-webview';

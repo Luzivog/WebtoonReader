@@ -53,31 +53,30 @@ const WebtoonDetailHeader = (
                 <Image source={{ uri: webtoon.imageUrl }} style={styles.image} resizeMode="cover" />
 
                 <View style={styles.detailsContainer}>
-                    {webtoon.details && (
-                        <>
-                            <DetailItem icon="book-outline" text={`Chapters: ${webtoon.details.lastChapter}`} />
-                            <DetailItem icon="eye-outline" text={`Views: ${webtoon.details.views}`} />
-                            <DetailItem icon="bookmark-outline" text={`Bookmarks: ${webtoon.details.bookmarks}`} />
-                            <DetailItem icon="time-outline" text={`Status: ${webtoon.details.status}`} />
-                        </>
-                    )}
-
-                    <View style={styles.buttonContainer}>
-
-                        <TouchableOpacity style={styles.button} onPress={handleReadChapter}>
-                            <Text style={styles.buttonText}>Read Chapter 1</Text>
-                        </TouchableOpacity>
-
-                        <View style={styles.buttonSeparator} />
-
-                        <TouchableOpacity style={styles.button} onPress={handleBookmark}>
-                            <Ionicons name="bookmark-outline" style={styles.buttonIcon} size={24} />
-                            <Text style={styles.buttonText}>Bookmark</Text>
-                        </TouchableOpacity>
-
+                {webtoon.details && (
+                    <View style={styles.statsContainer}>
+                        <DetailItem icon="eye-outline" text={`Views: ${webtoon.details.views}`} />
+                        <DetailItem icon="bookmark-outline" text={`Bookmarks: ${webtoon.details.bookmarks}`} />
+                        <DetailItem icon="time-outline" text={`Status: ${webtoon.details.status}`} />
                     </View>
+                )}
+
+                <View style={styles.buttonContainer}>
+
+                    <TouchableOpacity style={styles.button} onPress={handleReadChapter}>
+                        <Text style={styles.buttonText}>Read Chapter 1</Text>
+                    </TouchableOpacity>
+
+                    <View style={styles.buttonSeparator} />
+
+                    <TouchableOpacity style={styles.button} onPress={handleBookmark}>
+                        <Ionicons name="bookmark-outline" style={styles.buttonIcon} size={24} />
+                        <Text style={styles.buttonText}>Bookmark</Text>
+                    </TouchableOpacity>
 
                 </View>
+
+            </View>
 
             </View>
 
@@ -125,11 +124,17 @@ const styles = StyleSheet.create({
     },
     detailsContainer: {
         flex: 1,
+        justifyContent: 'space-between',
+    },
+    statsContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        marginTop: 15
     },
     buttonContainer: {
-        alignItems: 'center',
-        marginTop: 'auto',
-        marginBottom: 'auto',
+        flex: 1,
+        justifyContent: 'center',
+        marginBottom: 15
     },
     button: {
         flexDirection: 'row',

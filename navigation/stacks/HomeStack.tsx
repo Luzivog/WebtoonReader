@@ -1,8 +1,6 @@
 import * as React from 'react';
-import { RouteProp } from '@react-navigation/native';
 import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack';
 import HomeScreen from '../Screens/HomeScreen';
-import WebtoonDetailsScreen from '../Screens/WebtoonDetailsScreen';
 import Webtoon from '../Webtoon';
 import WebtoonStack from './WebtoonStack';
 
