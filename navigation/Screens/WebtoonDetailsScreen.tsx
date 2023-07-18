@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, TouchableOpacity, StatusBar } from 'react-nativ
 import { WebtoonDetailsScreenNavigationProp, WebtoonDetailsScreenRouteProp } from '../stacks/WebtoonStack';
 import isObjectEmpty, { fetchAllChapters, fetchWebtoonDetails } from '../utils';
 import { FlatList } from 'react-native-gesture-handler';
+import { FlashList } from "@shopify/flash-list";
 import WebtoonDetailHeader from './components/WebtoonDetailsHeader';
 import LoadingScreen from './LoadingScreen';
 
@@ -54,40 +55,48 @@ const WebtoonDetailsScreen = ({ navigation, route }: {
 	if (isLoading) return <LoadingScreen />;
 
 	return (
-		<FlatList
-			data={chapters}
-			extraData={chapters}
-			style={styles.chaptersContainer}
-			removeClippedSubviews={true}
-			ListHeaderComponent={
-				WebtoonDetailHeader(navigation, webtoon, isPopupVisible, setPopupVisible)
-			}
-			renderItem={({ item }) => (
-				<RenderItem
-					item={item}
-					onPress={() => navigation.navigate('ChapterScreen', { webtoon: webtoon, chapter: item })}
-				/>
-			)}
-		/>
+		<View style={styles.chaptersContainer}>
+			<FlashList
+				data={chapters}
+				extraData={chapters}
+				removeClippedSubviews={true}
+				estimatedItemSize={50}
+				ListHeaderComponent={
+					WebtoonDetailHeader(navigation, webtoon, isPopupVisible, setPopupVisible)
+				}
+				renderItem={({ item }) => (
+					<RenderItem
+						item={item}
+						onPress={() => navigation.navigate('ChapterScreen', { webtoon: webtoon, chapter: item })}
+					/>
+				)}
+			/>
+		</View>
 	);
 };
 
 const styles = StyleSheet.create({
 	chaptersContainer: {
 		marginTop: StatusBar.currentHeight,
-		marginHorizontal: 10,
+		alignContent: 'center',
+		width: '100%',
+		height: '100%',
+		paddingBottom: 30,
 	},
 	chapterItem: {
+		height: 50,
 		backgroundColor: '#353535',
 		borderRadius: 5,
 		paddingHorizontal: 10,
 		paddingVertical: 15,
 		marginBottom: 10,
-		width: '100%',
+		width: '95%',
+		alignSelf: 'center',
 	},
 	chapterItemContent: {
 		flexDirection: 'row',
-		justifyContent: 'space-between',
+		justifyContent: 'center',
+		alignItems: 'center',
 	},
 	chapterName: {
 		color: 'white',

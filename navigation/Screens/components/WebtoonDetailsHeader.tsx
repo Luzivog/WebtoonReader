@@ -82,7 +82,7 @@ const WebtoonDetailHeader = (
 
             <Text style={styles.title}>{webtoon.name}</Text>
 
-            <Modal visible={isPopupVisible} animationType="fade" transparent={true}>
+            <Modal visible={isPopupVisible} transparent={true}>
                 <InfoPopup details={webtoon.details} setPopupVisible={setPopupVisible} />
             </Modal>
 
