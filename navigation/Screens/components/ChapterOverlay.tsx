@@ -13,12 +13,12 @@ export default function ChapterScreenOverlay({ navigation, webtoon, chapter }: {
 
     const NavigationButton = ({ iconName, direction } : {iconName: string, direction: string}) => {
         const isButtonVisible = direction === 'next'
-            ? chapterIndex != webtoon.chapters.length - 1
-            : chapterIndex > 0;
+            ? chapterIndex > 0
+            : chapterIndex != webtoon.chapters.length - 1;
 
         const navigateTo = direction === 'next'
-            ? webtoon.chapters[chapterIndex + 1]
-            : webtoon.chapters[chapterIndex - 1];
+            ? webtoon.chapters[chapterIndex - 1]
+            : webtoon.chapters[chapterIndex + 1];
 
         if (isButtonVisible) {
             return (
@@ -29,6 +29,12 @@ export default function ChapterScreenOverlay({ navigation, webtoon, chapter }: {
         } else return (<View/>);
     }
 
+    const UtilityButton = ({ iconName, onPress } : {iconName: string, onPress: () => void}) => (
+        <TouchableOpacity onPress={onPress}>
+            <Ionicons name={iconName} style={[styles.icon, {fontSize: 30}]} />
+        </TouchableOpacity>
+    );
+
     return (
         <View style={styles.overlay}>
             <View style={styles.topBar}>
@@ -38,8 +44,14 @@ export default function ChapterScreenOverlay({ navigation, webtoon, chapter }: {
                 <Text numberOfLines={1} ellipsizeMode='tail' style={styles.chapterTitle}>{chapter.name}</Text>
             </View>
             <View style={styles.bottomBar}>
-                <NavigationButton iconName="caret-back" direction="next" />
-                <NavigationButton iconName="caret-forward" direction="previous" />
+                <View style={styles.utilityButtons}>
+                    <UtilityButton iconName="chatbubbles-outline" onPress={() => console.log("Comment")} />
+                    <UtilityButton iconName="bookmark-outline" onPress={() => console.log("Bookmark")} />
+                </View>
+                <View style={styles.navigationButtons}>
+                    <NavigationButton iconName="caret-back" direction="previous" />
+                    <NavigationButton iconName="caret-forward" direction="next" />
+                </View>
             </View>
         </View>
     )
@@ -78,8 +90,15 @@ const styles = StyleSheet.create({
         paddingLeft: 15,
         paddingRight: 15,
     },
+    navigationButtons: {
+        flexDirection: 'row',
+    },
+    utilityButtons: {
+        flexDirection: 'row',
+    },
     icon: {
         fontSize: 35,
-        color: 'white'
+        color: 'white',
+        marginHorizontal: 10
     }
 });

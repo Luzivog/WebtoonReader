@@ -1,11 +1,11 @@
-import { Dimensions, StatusBar, View, StyleSheet, TouchableOpacity } from "react-native";
+import { Dimensions, StatusBar, View, StyleSheet, TouchableOpacity, Text } from "react-native";
 import { ChapterScreenNavigationProp, ChapterScreenRouteProp } from "../stacks/WebtoonStack";
 import React, { useState, useEffect } from "react";
 import WebView from 'react-native-webview';
 import { fetchChapterImageUrls } from "../utils";
 import LoadingScreen from "./LoadingScreen";
 import ChapterScreenOverlay from "./components/ChapterOverlay";
-import { ScrollView } from "react-native-gesture-handler";
+
 
 const injectedJavaScript = `
 (function() {
@@ -45,6 +45,7 @@ const injectedJavaScript = `
 })();
 `
 
+
 const windowWidth = Dimensions.get('window').width;
 
 export default function ChapterScreen({ navigation, route }: {
@@ -56,8 +57,6 @@ export default function ChapterScreen({ navigation, route }: {
     const [isLoading, setIsLoading] = useState(true);
     const [html, setHtml] = useState("");
     const [overlayVisible, setOverlayVisible] = useState(false);
-    const [scrollViewHeight, setScrollViewHeight] = useState(0);
-
 
     useEffect(() => {
         (async () => {
@@ -65,69 +64,56 @@ export default function ChapterScreen({ navigation, route }: {
     
             let localHtml = `<html>`
             localHtml += "<body style='margin: 0 !important;padding: 0 !important;'>";
-            for (let url of urls) localHtml+="<div style='width: 100%;'><img style='width: 100%; height: auto;' src='"+url+"'></div>"
+            for (let url of urls) localHtml+="<div style='width: 100%;'><img style='width: 100%; height: auto;' src='"+url+"'></div>";
             localHtml += "</body></html>";
     
             setHtml(localHtml);
             setIsLoading(false);
         })();
     }, [webtoon, chapter]);
-    
 
     if (isLoading) return <LoadingScreen/>;
+
+    const messageManager = ({ nativeEvent: { data } }: { nativeEvent: { data: string } }) => {
+        if (data === "clicked") setOverlayVisible(!overlayVisible);
+    }
 
     return (
         <View style={styles.container}>
             <StatusBar hidden={!overlayVisible}/>
-            <ScrollView 
-                contentContainerStyle={{ height: scrollViewHeight }}
-            >
-                <WebView 
-                    source={{html:html}}
-                    style={styles.webView}
-                    bounces={false}
-                    scrollEnabled={false}
-                    showsHorizontalScrollIndicator={false}
-                    showsVerticalScrollIndicator={false}
-                    injectedJavaScript={injectedJavaScript}
-                    onMessage={({ nativeEvent: { data }}) => {
-                        if (data && data.length > 0 && data[0] === "[") {
-                            const parsedData = JSON.parse(data);
-                            console.log(parsedData); 
 
-                            let totalHeight = 0;
-                            for (const img of parsedData) {
-                                const scaleRatio = windowWidth / img.width
-                                totalHeight += Math.ceil(img.height * scaleRatio); 
-                                console.log(totalHeight)
-                            }
-                            setScrollViewHeight(Math.ceil(totalHeight));
-                        } else if (data === "clicked") setOverlayVisible(!overlayVisible);
-                    }}
-                />
+            <WebView 
+                source={{html:html}}
+                style={styles.webView}
+                bounces={false}
+                scrollEnabled={true}
+                onScroll={() => {if(overlayVisible) setOverlayVisible(false)}}
+                injectedJavaScript={injectedJavaScript}
+                onMessage={(nativeEvent) => messageManager(nativeEvent)}
+            />
 
-            </ScrollView>
     
             {overlayVisible && (
                 <ChapterScreenOverlay navigation={navigation} webtoon={webtoon} chapter={chapter}/>
             )}
+
         </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        width: "100%",
-        height: "100%",
+        width: '100%',
+        height: '100%',
     },
     webView: {
         width: windowWidth,
-        height: "100%",
+        flex: 1,
     },
     clickableArea: {
         position: 'absolute',
-        width: "100%",
-        height: "100%",
+        width: '100%',
+        height: '100%',
         backgroundColor: 'transparent',
     },
     button: {
