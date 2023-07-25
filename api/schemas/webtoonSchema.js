@@ -14,4 +14,4 @@ const webtoonSchema = new Schema({
 
 const Webtoon = model("Webtoon", webtoonSchema);
 
-export default Webtoon;
+module.exports = {Webtoon};

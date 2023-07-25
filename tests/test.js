@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+
 const {Schema, model} = mongoose;
 require('dotenv').config();
 
@@ -17,9 +18,9 @@ const User = model("User", userSchema);
 
 (async() => {
     try {
-        await mongoose.connect(process.env.MONGO_URL);
+        await mongoose.connect('process.env.MONGO_URL').catch(error => console.log('hoi'+error));
         console.log("Connected to MongoDB");
-
+        /*
         const user = new User({
             username: 'testUser',
             password: 'testPassword',
@@ -33,14 +34,8 @@ const User = model("User", userSchema);
             .catch((err) => {
                 console.error(err);
             });
-
-        User.findOne({ username: 'testUser' })
-            .then((doc) => {
-                console.log("User found", doc);
-            })
-            .catch((err) => {
-                console.error(err);
-            });
+        */
+        console.log(await User.findOne({ username: 'testUser' }))
     } catch (error) {
         console.log(error);
     }
