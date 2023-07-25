@@ -8,7 +8,7 @@
     "lint": "eslint .",
     "start-api": "node api/start.js",
     "start-react": "react-native start",
-    "start": "npm-run-all --parallel start-api start-react",
+    "start": "./start.sh",
     "test": "jest"
   },
   "dependencies": {
