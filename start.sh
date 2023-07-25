@@ -8,4 +8,4 @@ window_id=$(xdotool getactivewindow)
 xdotool windowactivate --sync $window_id key Ctrl+Page_Up
 
 # Run 'npm run start-react' in current terminal
-npm run start-react
+clear; npm run start-react
