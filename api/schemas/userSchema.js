@@ -2,12 +2,16 @@ const mongoose = require('mongoose');
 const {Schema, model} = mongoose;
 
 const userSchema = new Schema({
-    username: String,
-    password: String,
-    bookmarks: [String],
+    username: {type: String, required: true, maxLength: 20},
+    password: {type: String, required: true, maxLength: 100},
+    bookmarks: {
+        type: [{type: String, maxLength: 500}],
+        default: []
+    },
     viewed: {
         type: Map,
-        of: [String]
+        of: [{type: String, maxLength: 500}],
+        default: {}
     },
 });
 
