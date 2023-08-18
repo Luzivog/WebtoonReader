@@ -36,6 +36,7 @@ const WebtoonDetailsScreen = ({ navigation, route }: {
 	const { webtoon } = route.params;
 	const [isLoading, setIsLoading] = useState(true);
 	const [isPopupVisible, setPopupVisible] = useState(false);
+	const [isAuthOverlayVisible, toggleAuthOverlay] = useState(false);
 	const [chapters, setChapters] = useState(webtoon.chapters);
 
 	const fetchDetails = useCallback(async () => {
@@ -62,7 +63,7 @@ const WebtoonDetailsScreen = ({ navigation, route }: {
 				removeClippedSubviews={true}
 				estimatedItemSize={50}
 				ListHeaderComponent={
-					WebtoonDetailHeader(navigation, webtoon, isPopupVisible, setPopupVisible)
+					WebtoonDetailHeader(navigation, webtoon, isPopupVisible, isAuthOverlayVisible, setPopupVisible, toggleAuthOverlay)
 				}
 				renderItem={({ item }) => (
 					<RenderItem

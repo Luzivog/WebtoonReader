@@ -4,6 +4,7 @@ import Ionicons from "react-native-vector-icons/Ionicons"
 import Webtoon from "../../Webtoon"
 import DetailItem from "./DetailItem"
 import InfoPopup from "./InfoPopup"
+import AuthOverlay from './AuthOverlay';
 
 const handleReadChapter = () => {
     // Add logic to handle reading chapter 1
@@ -22,7 +23,9 @@ const WebtoonDetailHeader = (
     navigation: any,
     webtoon: Webtoon,
     isPopupVisible: boolean,
-    setPopupVisible: (visible: boolean) => void
+    isAuthOverlayVisible: boolean,
+    setPopupVisible: (visible: boolean) => void,
+    toggleAuthOverlay: (visible: boolean) => void
 
 ) => {
 
@@ -69,7 +72,7 @@ const WebtoonDetailHeader = (
 
                     <View style={styles.buttonSeparator} />
 
-                    <TouchableOpacity style={styles.button} onPress={handleBookmark}>
+                    <TouchableOpacity style={styles.button} onPress={() => toggleAuthOverlay(true)}>
                         <Ionicons name="bookmark-outline" style={styles.buttonIcon} size={24} />
                         <Text style={styles.buttonText}>Bookmark</Text>
                     </TouchableOpacity>
@@ -84,6 +87,10 @@ const WebtoonDetailHeader = (
 
             <Modal visible={isPopupVisible} transparent={true}>
                 <InfoPopup details={webtoon.details} setPopupVisible={setPopupVisible} />
+            </Modal>
+
+            <Modal visible={isAuthOverlayVisible} transparent={true}>
+                <AuthOverlay toggleAuthOverlay={toggleAuthOverlay} />
             </Modal>
 
         </View>
