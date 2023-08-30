@@ -10,7 +10,7 @@ app.use(express.json());
 const apiStart = () => {
 
     mongoose.connect(process.env.MONGO_URL)
-        .then(() => console.log('MongoDB connected...'))
+        .then(() => console.log('MongoDB connected!'))
         .catch((err) => console.log(err));
 
     /**
