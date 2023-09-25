@@ -5,6 +5,7 @@ import Webtoon from "../../Webtoon"
 import DetailItem from "./DetailItem"
 import InfoPopup from "./InfoPopup"
 import AuthOverlay from './AuthOverlay';
+import { WebtoonDetailsScreenNavigationProp } from '../../stacks/WebtoonStack';
 
 const handleReadChapter = () => {
     // Add logic to handle reading chapter 1
@@ -20,7 +21,7 @@ const handleDownload = () => {
 
 const WebtoonDetailHeader = (
 
-    navigation: any,
+    navigation: WebtoonDetailsScreenNavigationProp,
     webtoon: Webtoon,
     isPopupVisible: boolean,
     isAuthOverlayVisible: boolean,
@@ -72,7 +73,7 @@ const WebtoonDetailHeader = (
 
                     <View style={styles.buttonSeparator} />
 
-                    <TouchableOpacity style={styles.button} onPress={() => toggleAuthOverlay(true)}>
+                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("RegisterScreen")}>
                         <Ionicons name="bookmark-outline" style={styles.buttonIcon} size={24} />
                         <Text style={styles.buttonText}>Bookmark</Text>
                     </TouchableOpacity>

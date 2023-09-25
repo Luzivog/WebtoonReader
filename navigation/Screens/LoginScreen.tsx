@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import the icon library
+import { LoginScreenNavigationProp } from '../stacks/WebtoonStack';
 
-function LoginScreen({ navigation }): JSX.Element {
+function LoginScreen({ navigation } : {navigation: LoginScreenNavigationProp}): JSX.Element {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [isChecked, setIsChecked] = useState(false);
@@ -14,8 +15,7 @@ function LoginScreen({ navigation }): JSX.Element {
     };
 
     const handleRegister = () => {
-        // Navigate to the sign-in screen using the navigation prop
-        //navigation.navigate('Register');
+        navigation.navigate('RegisterScreen');
     };
 
     const togglePasswordVisibility = () => {
@@ -49,16 +49,6 @@ function LoginScreen({ navigation }): JSX.Element {
                         color="#333"
                     />
                 </TouchableOpacity>
-            </View>
-
-            <View style={styles.termsContainer}>
-                <CheckBox
-                    value={isChecked}
-                    onValueChange={(value) => setIsChecked(value)}
-                />
-                <Text style={styles.termsText}>
-                    I agree to the <Text style={styles.linkText}>Terms and Conditions</Text>
-                </Text>
             </View>
 
             <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>

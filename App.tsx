@@ -5,6 +5,6 @@ import LoginScreen from './navigation/Screens/LoginScreen';
 
 export default function App(): JSX.Element {
 	return (
-		<LoginScreen/>
+		<MainContainer/>
 	);
 };
