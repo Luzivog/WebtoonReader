@@ -3,6 +3,8 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'reac
 import CheckBox from '@react-native-community/checkbox';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import the icon library
 import { LoginScreenNavigationProp } from '../stacks/WebtoonStack';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { config } from '../config';
 
 function LoginScreen({ navigation } : {navigation: LoginScreenNavigationProp}): JSX.Element {
     const [username, setUsername] = useState('');
@@ -24,6 +26,9 @@ function LoginScreen({ navigation } : {navigation: LoginScreenNavigationProp}): 
 
     return (
         <View style={styles.container}>
+            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                <Ionicons name="arrow-back" size={40} color="tomato" />
+            </TouchableOpacity>
             <Text style={styles.title}>Login</Text>
             <TextInput
                 placeholder="Username"
@@ -69,6 +74,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#252525',
+    },
+    backButton: {
+        marginTop: config.StatusBarHeight,
+        position: 'absolute',
+        top: 10,
+        left: 10,
     },
     title: {
         fontSize: 24,

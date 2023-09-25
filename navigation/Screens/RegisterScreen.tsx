@@ -3,6 +3,8 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'reac
 import CheckBox from '@react-native-community/checkbox';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import the icon library
 import { RegisterScreenNavigationProp } from '../stacks/WebtoonStack';
+import { config } from '../config'
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 function RegisterScreen( { navigation } : { navigation: RegisterScreenNavigationProp, }): JSX.Element {
     const [username, setUsername] = useState('');
@@ -24,6 +26,9 @@ function RegisterScreen( { navigation } : { navigation: RegisterScreenNavigation
 
     return (
         <View style={styles.container}>
+            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                <Ionicons name="arrow-back" size={40} color="tomato" />
+            </TouchableOpacity>
             <Text style={styles.title}>Register</Text>
             <TextInput
                 placeholder="Username"
@@ -79,6 +84,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#252525',
+    },
+    backButton: {
+        marginTop: config.StatusBarHeight,
+        position: 'absolute',
+        top: 10,
+        left: 10,
     },
     title: {
         fontSize: 24,
