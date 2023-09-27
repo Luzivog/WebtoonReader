@@ -6,6 +6,7 @@ class Webtoon {
     private _apiUrl: string;
     private _details: { [key: string]: string };
     private _chapters: {name: string, released: string, url: string}[];
+    private _allChapters: boolean;
   
     constructor(name: string, imageUrl: string, apiUrl: string) {
       this._name = name;
@@ -13,6 +14,7 @@ class Webtoon {
       this._apiUrl = apiUrl;
       this._details = {};
       this._chapters = [];
+      this._allChapters= false;
     }
   
     // Getter for name
@@ -63,6 +65,16 @@ class Webtoon {
     // Setter for chapters
     set chapters(newChapters: {name: string, released: string, url: string}[]) {
       this._chapters = newChapters;
+    }
+
+    // Getter for chapters
+    get allChapters(): boolean {
+      return this._allChapters;
+    }
+  
+    // Setter for chapters
+    set allChapters(value: boolean) {
+      this._allChapters = value;
     }
   }
   

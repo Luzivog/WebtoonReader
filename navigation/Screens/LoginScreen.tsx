@@ -9,7 +9,6 @@ import { config } from '../config';
 function LoginScreen({ navigation } : {navigation: LoginScreenNavigationProp}): JSX.Element {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [isChecked, setIsChecked] = useState(false);
     const [isPasswordVisible, setIsPasswordVisible] = useState(false); // Track password visibility
 
     const handleLogin = () => {

@@ -3,7 +3,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
 import { WebtoonDetailsScreenNavigationProp, WebtoonDetailsScreenRouteProp } from '../stacks/WebtoonStack';
 import isObjectEmpty, { fetchAllChapters, fetchWebtoonDetails } from '../utils';
-import { FlatList } from 'react-native-gesture-handler';
 import { FlashList } from "@shopify/flash-list";
 import WebtoonDetailHeader from './components/WebtoonDetailsHeader';
 import LoadingScreen from './LoadingScreen';
@@ -42,7 +41,10 @@ const WebtoonDetailsScreen = ({ navigation, route }: {
 	const fetchDetails = useCallback(async () => {
 
 		if (isObjectEmpty(webtoon.details)) await fetchWebtoonDetails(webtoon);
-		else await fetchAllChapters(webtoon);
+		else if (!webtoon.allChapters) {
+			await fetchAllChapters(webtoon);
+			webtoon.allChapters = true;
+		};
 
 		setChapters(webtoon.chapters);
 		setIsLoading(false);
