@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { RouteProp } from '@react-navigation/native';
 import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack';
-import WebtoonDetailsScreen from '../Screens/WebtoonDetailsScreen';
+import WebtoonDetailsScreen from '../../Screens/WebtoonDetailsScreen';
 import Webtoon from '../Webtoon';
-import ChapterScreen from '../Screens/ChapterScreen';
-import RegisterScreen from '../Screens/RegisterScreen';
-import LoginScreen from '../Screens/LoginScreen';
+import ChapterScreen from '../../Screens/ChapterScreen';
+import RegisterScreen from '../../Screens/RegisterScreen';
+import LoginScreen from '../../Screens/LoginScreen';
 
 type RootStackParamList = {
     WebtoonDetailsScreen: { webtoon: Webtoon };

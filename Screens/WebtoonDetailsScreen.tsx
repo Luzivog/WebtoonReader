@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
-import { WebtoonDetailsScreenNavigationProp, WebtoonDetailsScreenRouteProp } from '../stacks/WebtoonStack';
-import isObjectEmpty, { fetchAllChapters, fetchWebtoonDetails } from '../utils';
+import { WebtoonDetailsScreenNavigationProp, WebtoonDetailsScreenRouteProp } from '../navigation/stacks/WebtoonStack';
+import isObjectEmpty, { fetchAllChapters, fetchWebtoonDetails } from '../navigation/utils';
 import { FlashList } from "@shopify/flash-list";
 import WebtoonDetailHeader from './components/WebtoonDetailsHeader';
 import LoadingScreen from './LoadingScreen';

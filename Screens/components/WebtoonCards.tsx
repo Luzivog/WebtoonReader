@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { HomeScreenNavigationProp } from '../../stacks/HomeStack';
-import Webtoon from '../../Webtoon';
+import { HomeScreenNavigationProp } from '../../navigation/stacks/HomeStack';
+import Webtoon from '../../navigation/Webtoon';
 
 const WebtoonCards = ({ navigation, webtoons }:{
     navigation: HomeScreenNavigationProp,

@@ -1,23 +1,22 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import CheckBox from '@react-native-community/checkbox';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import the icon library
-import { RegisterScreenNavigationProp } from '../stacks/WebtoonStack';
-import { config } from '../config'
+import { LoginScreenNavigationProp } from '../navigation/stacks/WebtoonStack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { config } from '../navigation/config';
 
-function RegisterScreen( { navigation } : { navigation: RegisterScreenNavigationProp, }): JSX.Element {
+function LoginScreen({ navigation } : {navigation: LoginScreenNavigationProp}): JSX.Element {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [isChecked, setIsChecked] = useState(false);
     const [isPasswordVisible, setIsPasswordVisible] = useState(false); // Track password visibility
 
-    const handleRegister = () => {
-        // Implement form validation and sign-up logic here
+    const handleLogin = async () => {
+        console.log("Loging in with the following username and password:", username, password);
+        
     };
 
-    const handleLogin = () => {
-        navigation.navigate("LoginScreen");
+    const handleRegister = () => {
+        navigation.navigate('RegisterScreen');
     };
 
     const togglePasswordVisibility = () => {
@@ -29,7 +28,7 @@ function RegisterScreen( { navigation } : { navigation: RegisterScreenNavigation
             <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
                 <Ionicons name="arrow-back" size={40} color="tomato" />
             </TouchableOpacity>
-            <Text style={styles.title}>Register</Text>
+            <Text style={styles.title}>Login</Text>
             <TextInput
                 placeholder="Username"
                 style={styles.input}
@@ -56,22 +55,12 @@ function RegisterScreen( { navigation } : { navigation: RegisterScreenNavigation
                 </TouchableOpacity>
             </View>
 
-            <View style={styles.termsContainer}>
-                <CheckBox
-                    value={isChecked}
-                    onValueChange={(value) => setIsChecked(value)}
-                />
-                <Text style={styles.termsText}>
-                    I agree to the <Text style={styles.linkText}>Terms and Conditions</Text>
-                </Text>
-            </View>
-
-            <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
-                <Text style={styles.signUpText}>Register</Text>
+            <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+                <Text style={styles.loginText}>Login</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.signUpButton} onPress={handleLogin}>
-                <Text style={styles.registerText}>Login</Text>
+            <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
+                <Text style={styles.registerText}>Register</Text>
             </TouchableOpacity>
 
         </View>
@@ -119,7 +108,7 @@ const styles = StyleSheet.create({
     eyeIcon: {
         padding: 10,
     },
-    registerButton: {
+    loginButton: {
         backgroundColor: 'tomato',
         width: '80%',
         padding: 15,
@@ -127,12 +116,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: 25,
     },
-    registerText: {
+    loginText: {
         color: '#fff',
         fontSize: 18,
         fontWeight: 'bold',
     },
-    signUpButton: {
+    registerButton: {
         backgroundColor: '#555555',
         width: '80%',
         padding: 15,
@@ -140,7 +129,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: 10,
     },
-    signUpText: {
+    registerText: {
         color: '#fff',
         fontSize: 18,
         fontWeight: 'bold',
@@ -159,4 +148,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default RegisterScreen;
+export default LoginScreen;

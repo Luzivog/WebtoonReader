@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { View, TouchableOpacity, Image, Text, Modal, StyleSheet } from "react-native"
 import Ionicons from "react-native-vector-icons/Ionicons"
-import Webtoon from "../../Webtoon"
+import Webtoon from "../../navigation/Webtoon"
 import DetailItem from "./DetailItem"
 import InfoPopup from "./InfoPopup"
 import AuthOverlay from './AuthOverlay';
-import { WebtoonDetailsScreenNavigationProp } from '../../stacks/WebtoonStack';
+import { WebtoonDetailsScreenNavigationProp } from '../../navigation/stacks/WebtoonStack';
 
 const handleReadChapter = () => {
     // Add logic to handle reading chapter 1

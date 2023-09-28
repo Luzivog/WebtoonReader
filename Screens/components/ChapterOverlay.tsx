@@ -1,8 +1,8 @@
 import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { ChapterScreenNavigationProp } from "../../stacks/WebtoonStack";
-import { config } from "../../config";
-import Webtoon from "../../Webtoon";
+import { ChapterScreenNavigationProp } from "../../navigation/stacks/WebtoonStack";
+import { config } from "../../navigation/config";
+import Webtoon from "../../navigation/Webtoon";
 
 export default function ChapterScreenOverlay({ navigation, webtoon, chapter }: {
     navigation: ChapterScreenNavigationProp,

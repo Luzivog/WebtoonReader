@@ -1,22 +1,23 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import CheckBox from '@react-native-community/checkbox';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import the icon library
-import { LoginScreenNavigationProp } from '../stacks/WebtoonStack';
+import { RegisterScreenNavigationProp } from '../navigation/stacks/WebtoonStack';
+import { config } from '../navigation/config'
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { config } from '../config';
 
-function LoginScreen({ navigation } : {navigation: LoginScreenNavigationProp}): JSX.Element {
+function RegisterScreen( { navigation } : { navigation: RegisterScreenNavigationProp, }): JSX.Element {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [isChecked, setIsChecked] = useState(false);
     const [isPasswordVisible, setIsPasswordVisible] = useState(false); // Track password visibility
 
-    const handleLogin = async () => {
-        console.log("Loging in with the following username and password:", username, password);
-        
+    const handleRegister = () => {
+        // Implement form validation and sign-up logic here
     };
 
-    const handleRegister = () => {
-        navigation.navigate('RegisterScreen');
+    const handleLogin = () => {
+        navigation.navigate("LoginScreen");
     };
 
     const togglePasswordVisibility = () => {
@@ -28,7 +29,7 @@ function LoginScreen({ navigation } : {navigation: LoginScreenNavigationProp}): 
             <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
                 <Ionicons name="arrow-back" size={40} color="tomato" />
             </TouchableOpacity>
-            <Text style={styles.title}>Login</Text>
+            <Text style={styles.title}>Register</Text>
             <TextInput
                 placeholder="Username"
                 style={styles.input}
@@ -55,12 +56,22 @@ function LoginScreen({ navigation } : {navigation: LoginScreenNavigationProp}): 
                 </TouchableOpacity>
             </View>
 
-            <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-                <Text style={styles.loginText}>Login</Text>
-            </TouchableOpacity>
+            <View style={styles.termsContainer}>
+                <CheckBox
+                    value={isChecked}
+                    onValueChange={(value) => setIsChecked(value)}
+                />
+                <Text style={styles.termsText}>
+                    I agree to the <Text style={styles.linkText}>Terms and Conditions</Text>
+                </Text>
+            </View>
 
             <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
-                <Text style={styles.registerText}>Register</Text>
+                <Text style={styles.signUpText}>Register</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.signUpButton} onPress={handleLogin}>
+                <Text style={styles.registerText}>Login</Text>
             </TouchableOpacity>
 
         </View>
@@ -108,7 +119,7 @@ const styles = StyleSheet.create({
     eyeIcon: {
         padding: 10,
     },
-    loginButton: {
+    registerButton: {
         backgroundColor: 'tomato',
         width: '80%',
         padding: 15,
@@ -116,12 +127,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: 25,
     },
-    loginText: {
+    registerText: {
         color: '#fff',
         fontSize: 18,
         fontWeight: 'bold',
     },
-    registerButton: {
+    signUpButton: {
         backgroundColor: '#555555',
         width: '80%',
         padding: 15,
@@ -129,7 +140,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: 10,
     },
-    registerText: {
+    signUpText: {
         color: '#fff',
         fontSize: 18,
         fontWeight: 'bold',
@@ -148,4 +159,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default LoginScreen;
+export default RegisterScreen;

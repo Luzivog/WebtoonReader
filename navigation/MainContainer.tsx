@@ -4,9 +4,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 // Screens
-import SearchScreen from './Screens/SearchScreen';
-import BookmarksScreen from './Screens/BookmarksScreen';
-import DownloadsScreens from './Screens/DownloadsScreen';
+import SearchScreen from '../Screens/SearchScreen';
+import BookmarksScreen from '../Screens/BookmarksScreen';
+import DownloadsScreens from '../Screens/DownloadsScreen';
 import HomeStack from './stacks/HomeStack';
 import { config } from './config';
 import { StatusBar, View } from 'react-native';

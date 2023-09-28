@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, StatusBar } from 'react-native';
-import Webtoon from '../Webtoon';
-import { loadMainWebtoons } from '../utils';
+import Webtoon from '../navigation/Webtoon';
+import { loadMainWebtoons } from '../navigation/utils';
 import WebtoonCards from './components/WebtoonCards';
-import { HomeScreenNavigationProp } from '../stacks/HomeStack';
+import { HomeScreenNavigationProp } from '../navigation/stacks/HomeStack';
 
 export default function HomeScreen({navigation}: {
         navigation: HomeScreenNavigationProp, 
