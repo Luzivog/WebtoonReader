@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack';
-import HomeScreen from '../../Screens/HomeScreen';
+import HomeScreen from '../../screens/HomeScreen';
 import Webtoon from '../Webtoon';
 import WebtoonStack from './WebtoonStack';
 
