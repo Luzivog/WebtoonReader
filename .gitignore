@@ -1,8 +1,8 @@
+env.tsx
+
 # OSX
 #
 .DS_Store
-.env
-./api/.env
 
 # Xcode
 #
