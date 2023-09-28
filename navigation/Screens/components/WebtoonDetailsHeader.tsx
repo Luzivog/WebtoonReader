@@ -11,8 +11,8 @@ const handleReadChapter = () => {
     // Add logic to handle reading chapter 1
 };
 
-const handleBookmark = () => {
-    // Add logic to handle bookmarking
+const handleBookmark = (navigation: WebtoonDetailsScreenNavigationProp) => {
+    navigation.navigate("RegisterScreen")
 };
 
 const handleDownload = () => {
@@ -73,7 +73,7 @@ const WebtoonDetailHeader = (
 
                     <View style={styles.buttonSeparator} />
 
-                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("RegisterScreen")}>
+                    <TouchableOpacity style={styles.button} onPress={() => handleBookmark(navigation)}>
                         <Ionicons name="bookmark-outline" style={styles.buttonIcon} size={24} />
                         <Text style={styles.buttonText}>Bookmark</Text>
                     </TouchableOpacity>

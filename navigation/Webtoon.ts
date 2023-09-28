@@ -1,5 +1,3 @@
-import { config } from "./config";
-
 class Webtoon {
     private _name: string;
     private _imageUrl: string;

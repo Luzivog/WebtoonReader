@@ -104,4 +104,4 @@ export async function fetchChapterImageUrls(webtoon: Webtoon, chapter: {name: st
 
 export default function isObjectEmpty(obj: { [key: string]: any }): boolean {
 	return Object.keys(obj).length === 0;
-}
+};

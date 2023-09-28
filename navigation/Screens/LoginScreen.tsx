@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import CheckBox from '@react-native-community/checkbox';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import the icon library
 import { LoginScreenNavigationProp } from '../stacks/WebtoonStack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -11,8 +10,9 @@ function LoginScreen({ navigation } : {navigation: LoginScreenNavigationProp}): 
     const [password, setPassword] = useState('');
     const [isPasswordVisible, setIsPasswordVisible] = useState(false); // Track password visibility
 
-    const handleLogin = () => {
-        // Implement form validation and sign-up logic here
+    const handleLogin = async () => {
+        console.log("Loging in with the following username and password:", username, password);
+        
     };
 
     const handleRegister = () => {
