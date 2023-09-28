@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, StatusBar } from 'react-native';
 import Webtoon from '../navigation/Webtoon';
-import { loadMainWebtoons } from '../navigation/utils';
+import { loadMainWebtoons } from '../utils/utils';
 import WebtoonCards from './components/WebtoonCards';
 import { HomeScreenNavigationProp } from '../navigation/stacks/HomeStack';
 

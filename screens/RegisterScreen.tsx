@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'reac
 import CheckBox from '@react-native-community/checkbox';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import the icon library
 import { RegisterScreenNavigationProp } from '../navigation/stacks/WebtoonStack';
-import { config } from '../navigation/config'
+import { config } from '../utils/config'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 function RegisterScreen( { navigation } : { navigation: RegisterScreenNavigationProp, }): JSX.Element {

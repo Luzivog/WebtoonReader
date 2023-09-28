@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'reac
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import the icon library
 import { LoginScreenNavigationProp } from '../navigation/stacks/WebtoonStack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { config } from '../navigation/config';
+import { config } from '../utils/config';
 
 function LoginScreen({ navigation } : {navigation: LoginScreenNavigationProp}): JSX.Element {
     const [username, setUsername] = useState('');

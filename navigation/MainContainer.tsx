@@ -8,7 +8,7 @@ import SearchScreen from '../screens/SearchScreen';
 import BookmarksScreen from '../screens/BookmarksScreen';
 import DownloadsScreens from '../screens/DownloadsScreen';
 import HomeStack from './stacks/HomeStack';
-import { config } from './config';
+import { config } from '../utils/config';
 import { StatusBar, View } from 'react-native';
 
 //Screen names

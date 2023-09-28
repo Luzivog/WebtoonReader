@@ -2,7 +2,7 @@ import { Dimensions, StatusBar, View, StyleSheet, TouchableOpacity, Text } from 
 import { ChapterScreenNavigationProp, ChapterScreenRouteProp } from "../navigation/stacks/WebtoonStack";
 import React, { useState, useEffect } from "react";
 import WebView from 'react-native-webview';
-import { fetchChapterImageUrls } from "../navigation/utils";
+import { fetchChapterImageUrls } from "../utils/utils";
 import LoadingScreen from "./LoadingScreen";
 import ChapterScreenOverlay from "./components/ChapterOverlay";
 
