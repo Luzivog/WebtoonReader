@@ -1,6 +1,7 @@
 import Webtoon from "./Webtoon";
 import { parse, HTMLElement } from 'node-html-parser';
 import { config } from "./config";
+import axios from "axios";
 
 /**
  * Fetches the main webtoons by making an HTTP request to a specific URL.
@@ -102,6 +103,12 @@ export async function fetchChapterImageUrls(webtoon: Webtoon, chapter: {name: st
 	return imageUrls ? imageUrls : [];
 }
 
-export default function isObjectEmpty(obj: { [key: string]: any }): boolean {
+export function isObjectEmpty(obj: { [key: string]: any }): boolean {
 	return Object.keys(obj).length === 0;
 };
+
+export async function getBase64FromImageUrl(url: string): Promise<string> {
+    const response = await axios.get(url, {responseType: 'arraybuffer'});
+    const base64 = Buffer.from(response.data, 'binary').toString('base64');
+    return `data:${response.headers['content-type']};base64,${base64}`;
+}

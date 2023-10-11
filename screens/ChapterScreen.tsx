@@ -5,6 +5,7 @@ import WebView from 'react-native-webview';
 import { fetchChapterImageUrls } from "../utils/utils";
 import LoadingScreen from "./LoadingScreen";
 import ChapterScreenOverlay from "./components/ChapterOverlay";
+import Webtoon, { Chapter } from "../utils/Webtoon";
 
 
 const injectedJavaScript = `
@@ -52,7 +53,7 @@ export default function ChapterScreen({ navigation, route }: {
     navigation: ChapterScreenNavigationProp,
     route: ChapterScreenRouteProp
 }) {    
-    const { webtoon, chapter } = route.params;
+    const { webtoon, chapter }: {webtoon: Webtoon, chapter: Chapter} = route.params;
 
     const [isLoading, setIsLoading] = useState(true);
     const [html, setHtml] = useState("");

@@ -2,10 +2,11 @@ import * as React from 'react';
 import { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
 import { WebtoonDetailsScreenNavigationProp, WebtoonDetailsScreenRouteProp } from '../navigation/stacks/WebtoonStack';
-import isObjectEmpty, { fetchAllChapters, fetchWebtoonDetails } from '../utils/utils';
+import { isObjectEmpty, fetchAllChapters, fetchWebtoonDetails } from '../utils/utils';
 import { FlashList } from "@shopify/flash-list";
 import WebtoonDetailHeader from './components/WebtoonDetailsHeader';
 import LoadingScreen from './LoadingScreen';
+import Webtoon from '../utils/Webtoon';
 
 interface RenderItemProps {
 	item: { name: string; released: string; url: string };
@@ -32,7 +33,7 @@ const WebtoonDetailsScreen = ({ navigation, route }: {
 	route: WebtoonDetailsScreenRouteProp
 }) => {
 
-	const { webtoon } = route.params;
+	const { webtoon }: {webtoon: Webtoon} = route.params;
 	const [isLoading, setIsLoading] = useState(true);
 	const [isPopupVisible, setPopupVisible] = useState(false);
 	const [isAuthOverlayVisible, toggleAuthOverlay] = useState(false);
@@ -67,10 +68,10 @@ const WebtoonDetailsScreen = ({ navigation, route }: {
 				ListHeaderComponent={
 					WebtoonDetailHeader(navigation, webtoon, isPopupVisible, isAuthOverlayVisible, setPopupVisible, toggleAuthOverlay)
 				}
-				renderItem={({ item }) => (
+				renderItem={({item: chapter}) => (
 					<RenderItem
-						item={item}
-						onPress={() => navigation.navigate('ChapterScreen', { webtoon: webtoon, chapter: item })}
+						item={chapter}
+						onPress={() => navigation.navigate('ChapterScreen', { webtoon: webtoon, chapter: chapter })}
 					/>
 				)}
 			/>

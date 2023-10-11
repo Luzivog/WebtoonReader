@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { View, TouchableOpacity, Image, Text, Modal, StyleSheet } from "react-native"
+import RNFS from 'react-native-fs';
 import Ionicons from "react-native-vector-icons/Ionicons"
 import Webtoon from "../../utils/Webtoon"
 import DetailItem from "./DetailItem"
 import InfoPopup from "./InfoPopup"
 import AuthOverlay from './AuthOverlay';
 import { WebtoonDetailsScreenNavigationProp } from '../../navigation/stacks/WebtoonStack';
+import { fetchChapterImageUrls, getBase64FromImageUrl } from '../../utils/utils';
 
 const handleReadChapter = () => {
     // Add logic to handle reading chapter 1
@@ -15,8 +17,23 @@ const handleBookmark = (navigation: WebtoonDetailsScreenNavigationProp) => {
     navigation.navigate("RegisterScreen")
 };
 
-const handleDownload = () => {
-    // Add download functionality here
+const handleDownload = async (webtoon: Webtoon) => {
+    console.log("starting download...");
+    for (let i = /*webtoon.chapters.length-1*/0; i >= 0; i--) {
+        const chapter = webtoon.chapters[i];
+        const imagesUrls = await fetchChapterImageUrls(webtoon, chapter);
+        console.log(chapter);
+        
+        for (let i = 0; i < imagesUrls.length; i++) {
+            const base64Img = await getBase64FromImageUrl(imagesUrls[i]);
+            const filename = imagesUrls[i].split('/').slice(-2).join("-");
+            const localPath = `${RNFS.DocumentDirectoryPath}/${filename}`;
+            await RNFS.writeFile(localPath, base64Img, 'base64');
+            console.log(`${i+1}/${imagesUrls.length}`);
+        };
+        
+    };
+    console.log("finished download");
 };
 
 const WebtoonDetailHeader = (
@@ -45,7 +62,7 @@ const WebtoonDetailHeader = (
                         <Ionicons name='information-circle-outline' style={styles.icon} size={30} />
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={handleDownload}>
+                    <TouchableOpacity onPress={() => handleDownload(webtoon)}>
                         <Ionicons name='download-outline' style={styles.icon} size={30} />
                     </TouchableOpacity>
 

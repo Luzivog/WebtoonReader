@@ -2,10 +2,7 @@ const axios = require('axios');
 
 async function getBase64FromImageUrl(url) {
     const response = await axios.get(url, {responseType: 'arraybuffer'});
-
-    // Convert the ArrayBuffer to Base64
     const base64 = Buffer.from(response.data, 'binary').toString('base64');
-
     return `data:${response.headers['content-type']};base64,${base64}`;
 }
 
