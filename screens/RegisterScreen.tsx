@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome'; // Import the icon lib
 import { RegisterScreenNavigationProp } from '../navigation/stacks/WebtoonStack';
 import { config } from '../utils/config'
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {createUser} from '../utils/apiCall';
 
 function RegisterScreen( { navigation } : { navigation: RegisterScreenNavigationProp, }): JSX.Element {
     const [username, setUsername] = useState('');
@@ -12,8 +13,8 @@ function RegisterScreen( { navigation } : { navigation: RegisterScreenNavigation
     const [isChecked, setIsChecked] = useState(false);
     const [isPasswordVisible, setIsPasswordVisible] = useState(false); // Track password visibility
 
-    const handleRegister = () => {
-        // Implement form validation and sign-up logic here
+    const handleRegister = async () => {
+        await createUser(username, password);
     };
 
     const handleLogin = () => {

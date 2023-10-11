@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { View, TouchableOpacity, Image, Text, Modal, StyleSheet } from "react-native"
 import Ionicons from "react-native-vector-icons/Ionicons"
-import Webtoon from "../../navigation/Webtoon"
+import Webtoon from "../../utils/Webtoon"
 import DetailItem from "./DetailItem"
 import InfoPopup from "./InfoPopup"
 import AuthOverlay from './AuthOverlay';

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack';
 import HomeScreen from '../../screens/HomeScreen';
-import Webtoon from '../Webtoon';
+import Webtoon from '../../utils/Webtoon';
 import WebtoonStack from './WebtoonStack';
 
 type RootStackParamList = {
