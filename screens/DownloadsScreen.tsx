@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Image } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image, Dimensions, StatusBar } from 'react-native';
 import RNFS from 'react-native-fs';
+import { config } from '../utils/config'
 
 function DownloadsScreen(): JSX.Element {
 
@@ -49,6 +50,11 @@ function DownloadsScreen(): JSX.Element {
     );
 };
 
+
+const numColumns = 2;
+const screenWidth = Dimensions.get('window').width;
+const imageSize = (screenWidth - 30) / numColumns; // Assuming 10 padding on both sides and in between items
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -57,14 +63,16 @@ const styles = StyleSheet.create({
         backgroundColor: '#252525',
     },
     list: {
+        marginTop: config.StatusBarHeight,
         paddingHorizontal: 10,
     },
     item: {
-        flex: 1,
         padding: 10,
+        width: imageSize,
+        height: imageSize * (16 / 9),
     },
     image: {
-        aspectRatio: 9/16,
+        aspectRatio: 9 / 16,
         width: "100%",
     },
 });

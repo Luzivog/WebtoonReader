@@ -45,13 +45,14 @@ const handleDownload = async (webtoon: Webtoon) => {
 
         const imagesUrls = await fetchChapterImageUrls(webtoon, webtoon.chapters[i]);
 
-        for (let i = 0; i < imagesUrls.length; i++) {
-            const base64Img = await getBase64FromImageUrl(imagesUrls[i]);
-            const imgName = imagesUrls[i].split("/").slice(-1)[0];
-            console.log(`Downloading: ${imgName}`)
+        const downloadPromises = imagesUrls.map(async (imageUrl) => {
+            const base64Img = await getBase64FromImageUrl(imageUrl);
+            const imgName = imageUrl.split("/").slice(-1)[0];
+            console.log(`Downloading: ${imgName}`);
             await RNFS.writeFile(`${chapterPath}${imgName}`, base64Img);
-        };
+        });
 
+        await Promise.all(downloadPromises);
         await RNFS.writeFile(chapterPath + "done", "");
 
         console.log(`Finished downloading chapter: ${webtoon.chapters[i].name}`);
