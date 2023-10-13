@@ -7,7 +7,7 @@ import DetailItem from "./DetailItem"
 import InfoPopup from "./InfoPopup"
 import AuthOverlay from './AuthOverlay';
 import { WebtoonDetailsScreenNavigationProp } from '../../navigation/stacks/WebtoonStack';
-import { fetchChapterImageUrls, getBase64FromImageUrl } from '../../utils/utils';
+import { fetchChapterImageUrls, getBase64FromImageUrl, sanitizeFileName } from '../../utils/utils';
 
 const handleReadChapter = () => {
     // Add logic to handle reading chapter 1
@@ -17,23 +17,65 @@ const handleBookmark = (navigation: WebtoonDetailsScreenNavigationProp) => {
     navigation.navigate("RegisterScreen")
 };
 
+const deleteFolderRecursive = async (path: string) => {
+    if (await RNFS.exists(path)) {
+      const files = await RNFS.readDir(path);
+  
+      for (const file of files) {
+        if (file.isDirectory()) {
+          // Recursively delete subdirectories
+          await deleteFolderRecursive(file.path);
+        } else {
+          // Delete individual files
+          await RNFS.unlink(file.path);
+        }
+      }
+  
+      // Delete the (now empty) directory
+      await RNFS.unlink(path);
+    }
+  };
+
 const handleDownload = async (webtoon: Webtoon) => {
-    console.log("starting download...");
-    for (let i = /*webtoon.chapters.length-1*/0; i >= 0; i--) {
-        const chapter = webtoon.chapters[i];
-        const imagesUrls = await fetchChapterImageUrls(webtoon, chapter);
-        console.log(chapter);
-        
+
+    const webtoonName = webtoon.apiUrl.slice(1,-1).split("/").join("-");
+    const dirPath = RNFS.DocumentDirectoryPath + '/downloads/' + webtoonName + "/";
+
+    // Webtoon Folder
+    if (!await RNFS.exists(dirPath)) await RNFS.mkdir(dirPath);
+
+    // Cover Image Download
+    if (!(await RNFS.exists(dirPath+"cover"))) {
+        console.log(webtoon.imageUrl);
+        const base64Img = await getBase64FromImageUrl(webtoon.imageUrl);
+        await RNFS.writeFile(dirPath+"cover", base64Img, 'base64');
+    };
+
+    // Chapter Folder
+    const chaptersPath = dirPath + "chapters/";
+    if (!await RNFS.exists(chaptersPath)) await RNFS.mkdir(chaptersPath);
+    
+    for (let i = webtoon.chapters.length-1; i >= 0; i--) {
+
+        const chapterName = sanitizeFileName(webtoon.chapters[i].name);
+        console.log(`Downloading chapter: ${chapterName}`);
+
+        const chapterPath = `${chaptersPath}${chapterName}/`;
+        if (!await RNFS.exists(chapterPath)) await RNFS.mkdir(chapterPath);
+
+        const imagesUrls = await fetchChapterImageUrls(webtoon, webtoon.chapters[i]);
+
         for (let i = 0; i < imagesUrls.length; i++) {
             const base64Img = await getBase64FromImageUrl(imagesUrls[i]);
-            const filename = imagesUrls[i].split('/').slice(-2).join("-");
-            const localPath = `${RNFS.DocumentDirectoryPath}/${filename}`;
-            await RNFS.writeFile(localPath, base64Img, 'base64');
-            console.log(`${i+1}/${imagesUrls.length}`);
+            const imgName = imagesUrls[i].split("/").slice(-1)[0];
+            console.log(`Downloading: ${imgName}`)
+            await RNFS.writeFile(`${chapterPath}${imgName}`, base64Img, 'base64');
         };
-        
+
+        await RNFS.writeFile(chapterPath+"done", "");
+
+        console.log(`Finished downloading chapter: ${webtoon.chapters[i].name}`);
     };
-    console.log("finished download");
 };
 
 const WebtoonDetailHeader = (

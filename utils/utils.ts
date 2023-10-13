@@ -112,3 +112,11 @@ export async function getBase64FromImageUrl(url: string): Promise<string> {
     const base64 = Buffer.from(response.data, 'binary').toString('base64');
     return `data:${response.headers['content-type']};base64,${base64}`;
 }
+
+export function sanitizeFileName(fileName: string): string {
+
+	const invalidCharactersPattern = /[\/\\:*?"<>|]/g;
+	const sanitizedFileName = fileName.replace(invalidCharactersPattern, '');
+
+	return sanitizedFileName;
+}
