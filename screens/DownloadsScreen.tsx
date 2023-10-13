@@ -61,6 +61,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#252525',
+        paddingBottom: 20
     },
     list: {
         marginTop: config.StatusBarHeight,
