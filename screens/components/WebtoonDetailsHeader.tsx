@@ -17,45 +17,25 @@ const handleBookmark = (navigation: WebtoonDetailsScreenNavigationProp) => {
     navigation.navigate("RegisterScreen")
 };
 
-const deleteFolderRecursive = async (path: string) => {
-    if (await RNFS.exists(path)) {
-      const files = await RNFS.readDir(path);
-  
-      for (const file of files) {
-        if (file.isDirectory()) {
-          // Recursively delete subdirectories
-          await deleteFolderRecursive(file.path);
-        } else {
-          // Delete individual files
-          await RNFS.unlink(file.path);
-        }
-      }
-  
-      // Delete the (now empty) directory
-      await RNFS.unlink(path);
-    }
-  };
-
 const handleDownload = async (webtoon: Webtoon) => {
 
-    const webtoonName = webtoon.apiUrl.slice(1,-1).split("/").join("-");
+    const webtoonName = webtoon.apiUrl.slice(1, -1).split("/").join("-");
     const dirPath = RNFS.DocumentDirectoryPath + '/downloads/' + webtoonName + "/";
 
     // Webtoon Folder
     if (!await RNFS.exists(dirPath)) await RNFS.mkdir(dirPath);
 
     // Cover Image Download
-    if (!(await RNFS.exists(dirPath+"cover"))) {
-        console.log(webtoon.imageUrl);
+    if (!(await RNFS.exists(dirPath + "cover"))) {
         const base64Img = await getBase64FromImageUrl(webtoon.imageUrl);
-        await RNFS.writeFile(dirPath+"cover", base64Img, 'base64');
+        await RNFS.writeFile(dirPath + "cover", base64Img);
     };
 
     // Chapter Folder
     const chaptersPath = dirPath + "chapters/";
     if (!await RNFS.exists(chaptersPath)) await RNFS.mkdir(chaptersPath);
-    
-    for (let i = webtoon.chapters.length-1; i >= 0; i--) {
+
+    for (let i = webtoon.chapters.length - 1; i >= 0; i--) {
 
         const chapterName = sanitizeFileName(webtoon.chapters[i].name);
         console.log(`Downloading chapter: ${chapterName}`);
@@ -69,10 +49,10 @@ const handleDownload = async (webtoon: Webtoon) => {
             const base64Img = await getBase64FromImageUrl(imagesUrls[i]);
             const imgName = imagesUrls[i].split("/").slice(-1)[0];
             console.log(`Downloading: ${imgName}`)
-            await RNFS.writeFile(`${chapterPath}${imgName}`, base64Img, 'base64');
+            await RNFS.writeFile(`${chapterPath}${imgName}`, base64Img);
         };
 
-        await RNFS.writeFile(chapterPath+"done", "");
+        await RNFS.writeFile(chapterPath + "done", "");
 
         console.log(`Finished downloading chapter: ${webtoon.chapters[i].name}`);
     };
@@ -116,30 +96,30 @@ const WebtoonDetailHeader = (
                 <Image source={{ uri: webtoon.imageUrl }} style={styles.image} resizeMode="cover" />
 
                 <View style={styles.detailsContainer}>
-                {webtoon.details && (
-                    <View style={styles.statsContainer}>
-                        <DetailItem icon="eye-outline" text={`Views: ${webtoon.details.views}`} />
-                        <DetailItem icon="bookmark-outline" text={`Bookmarks: ${webtoon.details.bookmarks}`} />
-                        <DetailItem icon="time-outline" text={`Status: ${webtoon.details.status}`} />
+                    {webtoon.details && (
+                        <View style={styles.statsContainer}>
+                            <DetailItem icon="eye-outline" text={`Views: ${webtoon.details.views}`} />
+                            <DetailItem icon="bookmark-outline" text={`Bookmarks: ${webtoon.details.bookmarks}`} />
+                            <DetailItem icon="time-outline" text={`Status: ${webtoon.details.status}`} />
+                        </View>
+                    )}
+
+                    <View style={styles.buttonContainer}>
+
+                        <TouchableOpacity style={styles.button} onPress={handleReadChapter}>
+                            <Text style={styles.buttonText}>Read Chapter 1</Text>
+                        </TouchableOpacity>
+
+                        <View style={styles.buttonSeparator} />
+
+                        <TouchableOpacity style={styles.button} onPress={() => handleBookmark(navigation)}>
+                            <Ionicons name="bookmark-outline" style={styles.buttonIcon} size={24} />
+                            <Text style={styles.buttonText}>Bookmark</Text>
+                        </TouchableOpacity>
+
                     </View>
-                )}
-
-                <View style={styles.buttonContainer}>
-
-                    <TouchableOpacity style={styles.button} onPress={handleReadChapter}>
-                        <Text style={styles.buttonText}>Read Chapter 1</Text>
-                    </TouchableOpacity>
-
-                    <View style={styles.buttonSeparator} />
-
-                    <TouchableOpacity style={styles.button} onPress={() => handleBookmark(navigation)}>
-                        <Ionicons name="bookmark-outline" style={styles.buttonIcon} size={24} />
-                        <Text style={styles.buttonText}>Bookmark</Text>
-                    </TouchableOpacity>
 
                 </View>
-
-            </View>
 
             </View>
 

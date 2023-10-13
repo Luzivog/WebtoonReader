@@ -2,6 +2,7 @@ import Webtoon from "./Webtoon";
 import { parse, HTMLElement } from 'node-html-parser';
 import { config } from "./config";
 import axios from "axios";
+import RNFS from 'react-native-fs';
 
 /**
  * Fetches the main webtoons by making an HTTP request to a specific URL.
@@ -111,7 +112,7 @@ export async function getBase64FromImageUrl(url: string): Promise<string> {
     const response = await axios.get(url, {responseType: 'arraybuffer'});
     const base64 = Buffer.from(response.data, 'binary').toString('base64');
     return `data:${response.headers['content-type']};base64,${base64}`;
-}
+};
 
 export function sanitizeFileName(fileName: string): string {
 
@@ -119,4 +120,20 @@ export function sanitizeFileName(fileName: string): string {
 	const sanitizedFileName = fileName.replace(invalidCharactersPattern, '');
 
 	return sanitizedFileName;
-}
+};
+
+export async function deleteFolderRecursive (path: string) {
+    if (await RNFS.exists(path)) {
+        const files = await RNFS.readDir(path);
+
+        for (const file of files) {
+            if (file.isDirectory()) {
+                await deleteFolderRecursive(file.path);
+            } else {
+                await RNFS.unlink(file.path);
+            }
+        }
+
+        await RNFS.unlink(path);
+    }
+};
