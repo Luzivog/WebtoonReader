@@ -8,7 +8,7 @@ import SearchScreen from '../screens/SearchScreen';
 import BookmarksScreen from '../screens/BookmarksScreen';
 import DownloadsScreens from '../screens/DownloadsScreen';
 import HomeStack from './stacks/HomeStack';
-import { config } from '../utils/config';
+import { CustomDarkTheme, navigationBarHeight } from '../utils/config';
 import { StatusBar, View } from 'react-native';
 
 //Screen names
@@ -23,12 +23,12 @@ function MainContainer() {
 	return (
 		<View style={{width: '100%', height: '100%',backgroundColor: '#252525'}}>
 		<StatusBar translucent backgroundColor='transparent' />
-			<NavigationContainer theme={config.CustomDarkTheme}>
+			<NavigationContainer theme={CustomDarkTheme}>
 				<Tab.Navigator
 					initialRouteName={homeName}
 					screenOptions={({ route }) => ({
 						headerShown: false,
-						tabBarStyle: [{ backgroundColor: 'black', height: 60 }],
+						tabBarStyle: [{ backgroundColor: 'black', height: navigationBarHeight }],
 						tabBarActiveTintColor: 'tomato',
 						tabBarIcon: ({ focused, color, size }) => {
 							let iconName;

@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'reac
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import the icon library
 import { LoginScreenNavigationProp } from '../navigation/stacks/WebtoonStack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { config } from '../utils/config';
+import { StatusBarHeight } from '../utils/config';
 
 function LoginScreen({ navigation } : {navigation: LoginScreenNavigationProp}): JSX.Element {
     const [username, setUsername] = useState('');
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#252525',
     },
     backButton: {
-        marginTop: config.StatusBarHeight,
+        marginTop: StatusBarHeight,
         position: 'absolute',
         top: 10,
         left: 10,

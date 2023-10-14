@@ -4,8 +4,8 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import Webtoon from '../utils/Webtoon';
 import { loadMainWebtoons } from '../utils/utils';
 import { HomeScreenNavigationProp } from '../navigation/stacks/HomeStack';
-import { config } from '../utils/config'
 import WebtoonCard from './components/WebtoonCard';
+import { StatusBarHeight } from '../utils/config';
 
 export default function HomeScreen({navigation}: {
         navigation: HomeScreenNavigationProp, 
@@ -71,7 +71,7 @@ export default function HomeScreen({navigation}: {
 
 const styles = StyleSheet.create({
     container: {
-        marginTop: config.StatusBarHeight,
+        marginTop: StatusBarHeight,
         flex: 1,
         backgroundColor: '#252525',
     },

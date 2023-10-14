@@ -1,16 +1,17 @@
 import * as React from 'react';
-import { Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { Text, StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
+import { vw } from '../../utils/config';
 
-
-const WebtoonCard = ({ uri, webtoonName, onPress }: {
+const WebtoonCard = ({ uri, webtoonName, onPress, width }: {
 	uri: string,
 	webtoonName: string,
-	onPress: Function
+	onPress: Function,
+	width: number
 }) => {
 
 	return (
 		<TouchableOpacity
-			style={styles.card}
+			style={[styles.card, {width: width}]}
 			onPress={() => { onPress() }}
 		>
 			<Image
@@ -28,7 +29,6 @@ const styles = StyleSheet.create({
 	card: {
 		backgroundColor: '#101010',
 		borderRadius: 10,
-		width: 140,
 		alignContent: 'center',
 	},	
 	image: {
@@ -48,5 +48,7 @@ const styles = StyleSheet.create({
 		height: (18 * 2) + 10,
 	},
 });
+
+WebtoonCard.defaultProps = {width: 36*vw};
 
 export default WebtoonCard;

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { View, StyleSheet, FlatList, Image, Dimensions, StatusBar } from 'react-native';
 import RNFS from 'react-native-fs';
-import { config } from '../utils/config'
 import WebtoonCard from './components/WebtoonCard';
+import { StatusBarHeight, navigationBarHeight, vw } from '../utils/config';
 
 const numColumns = 2;
 
@@ -47,11 +47,16 @@ function DownloadsScreen(): JSX.Element {
                 renderItem={({ item }: {item: {cover: string, name: string}}) => {
                     return (
                     <View style={styles.item}>
-                        <WebtoonCard uri={item.cover} webtoonName={item.name} onPress={()=>{}}/>
+                        <WebtoonCard 
+                            uri={item.cover}
+                            webtoonName={item.name}
+                            width={42*vw}
+                            onPress={()=>{}}
+                        />
                     </View>
                 )}}
-                keyExtractor={(item, index) => index.toString()}
-                columnWrapperStyle={{justifyContent:'space-between'}}
+                keyExtractor={(_, index) => index.toString()}
+                columnWrapperStyle={{justifyContent:'space-evenly'}}
                 numColumns={numColumns}
                 contentContainerStyle={styles.list}
             />
@@ -59,24 +64,16 @@ function DownloadsScreen(): JSX.Element {
     );
 };
 
-
-const screenWidth = Dimensions.get('window').width;
-const imageSize = (screenWidth - 30) / numColumns;
-
 const styles = StyleSheet.create({
     container: {
         backgroundColor: '#252525',
-        paddingBottom: 20,
     },
     list: {
-        marginTop: config.StatusBarHeight,
-        paddingHorizontal: 10,
+        marginTop: StatusBarHeight,
+        paddingBottom: navigationBarHeight,
         backgroundColor: "yellow",
     },
     item: {
-        width: imageSize,
-        height: imageSize * (16 / 9),
-        backgroundColor: 'green',
         justifyContent: 'center',
         alignItems: 'center',
     },

@@ -1,8 +1,8 @@
 import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { ChapterScreenNavigationProp } from "../../navigation/stacks/WebtoonStack";
-import { config } from "../../utils/config";
 import Webtoon from "../../utils/Webtoon";
+import { StatusBarHeight } from "../../utils/config";
 
 export default function ChapterScreenOverlay({ navigation, webtoon, chapter }: {
     navigation: ChapterScreenNavigationProp,
@@ -69,10 +69,10 @@ const styles = StyleSheet.create({
     topBar: {
         flexDirection: 'row',
         alignItems: 'center',
-        height: config.StatusBarHeight + 50,
+        height: StatusBarHeight + 50,
         backgroundColor: '#252525',
         paddingLeft: 15,
-        paddingTop: config.StatusBarHeight,
+        paddingTop: StatusBarHeight,
     },
     chapterTitle: {
         marginLeft: 20,

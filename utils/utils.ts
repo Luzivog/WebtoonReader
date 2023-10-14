@@ -1,8 +1,8 @@
 import Webtoon from "./Webtoon";
 import { parse, HTMLElement } from 'node-html-parser';
-import { config } from "./config";
 import axios from "axios";
 import RNFS from 'react-native-fs';
+import { defaultDetails, defaultImage, defaultTitle } from "./config";
 
 /**
  * Fetches the main webtoons by making an HTTP request to a specific URL.
@@ -25,9 +25,9 @@ export async function loadMainWebtoons(): Promise<Webtoon[]> {
 	const htmlRes = parse(await fetchHtmlRes('https://www.mangageko.com/jumbo/manga/')).removeWhitespace();
 
 	const novelItems = htmlRes.querySelectorAll('li[class="swiper-slide novel-item"]');
-    let names = novelItems.map((parent) => (parent.firstChild as HTMLElement).getAttribute('title') || config.defaultTitle);
+    let names = novelItems.map((parent) => (parent.firstChild as HTMLElement).getAttribute('title') || defaultTitle);
     let apiUrls = novelItems.map((parent) => (parent.firstChild as HTMLElement).getAttribute('href') || '');
-    let imageUrls = htmlRes.querySelectorAll('img[data-src]').slice(0,24).map(element => element.getAttribute('data-src') || config.defaultImage)
+    let imageUrls = htmlRes.querySelectorAll('img[data-src]').slice(0,24).map(element => element.getAttribute('data-src') || defaultImage)
 
 	for (let i = 0; i<24; i++) mainWebtoons.push(new Webtoon(names[i], imageUrls[i], apiUrls[i]));
 
@@ -51,13 +51,12 @@ export async function updateWebtoonChapters(webtoon: Webtoon, parsedHtml: HTMLEl
 }
 
 export async function fetchWebtoonDetails(webtoon: Webtoon): Promise<void> {
-	// fetchHtmlRes('https://www.mangageko.com'+webtoon.apiUrl+'all-chapters/')
 
 	const htmlDetails = await fetchHtmlRes('https://www.mangageko.com'+webtoon.apiUrl);
 	const parsedDetails= parse(htmlDetails).removeWhitespace();
 
 	const stats = parsedDetails.querySelector('div[class="header-stats"]');
-	if (stats == null) { webtoon.details = config.defaultDetails; return; };
+	if (stats == null) { webtoon.details = defaultDetails; return; };
 
 	const statNodes = stats.childNodes;
 	let lastChapter = (statNodes[0] as HTMLElement).firstChild.innerText.split(' ')[1].split('-')[0];
@@ -68,9 +67,9 @@ export async function fetchWebtoonDetails(webtoon: Webtoon): Promise<void> {
 	let bookmarks = (statNodes[2] as HTMLElement).firstChild.innerText.split(' ').slice(1).join(' ');
 	let status = (statNodes[3] as HTMLElement).firstChild.innerText;
 	let summaryNodes = parsedDetails.querySelector('p[class="description"]');
-	let summary = (summaryNodes ? summaryNodes.childNodes.slice(1).map(n => n.innerText) : [config.defaultDetails.summary]).join('\n').trim();
+	let summary = (summaryNodes ? summaryNodes.childNodes.slice(1).map(n => n.innerText) : [defaultDetails.summary]).join('\n').trim();
 	
-	if (summary == config.defaultDetails.summary) {
+	if (summary == defaultDetails.summary) {
 		const matchDesc = htmlDetails.match(/<p class="description">(.*?)<\/p>/s);
 		if (matchDesc) summary = matchDesc[1].trim().split("\n").slice(1).join(' ').replaceAll("\r", '').replaceAll("<br>", "\n").trim();
 	};
