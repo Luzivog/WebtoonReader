@@ -3,10 +3,9 @@ import { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import Webtoon from '../utils/Webtoon';
 import { loadMainWebtoons } from '../utils/utils';
-import WebtoonCards from './components/WebtoonCards';
 import { HomeScreenNavigationProp } from '../navigation/stacks/HomeStack';
 import { config } from '../utils/config'
-
+import WebtoonCard from './components/WebtoonCard';
 
 export default function HomeScreen({navigation}: {
         navigation: HomeScreenNavigationProp, 
@@ -29,14 +28,38 @@ export default function HomeScreen({navigation}: {
             <View style={[styles.sectionHeader, {marginTop: 10}]}>
                 <Text style={styles.sectionHeaderText}>Most Viewed Today</Text>
             </View>
-            <ScrollView style={styles.scrollView} horizontal showsHorizontalScrollIndicator={false}>
-                <WebtoonCards webtoons={mostViewedWebtoons} navigation={navigation}/>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                <View style={styles.cardContainer}>
+                    {mostViewedWebtoons.map((webtoon, index) => (
+                        <WebtoonCard
+                            key={index}
+                            uri={webtoon.imageUrl}
+                            webtoonName={webtoon.name}
+                            onPress={() => {navigation.navigate('WebtoonStack', { 
+                                screen: "WebtoonDetailsScreen", 
+                                params: {webtoon: webtoon}
+                            })}}
+                        />
+                    ))}
+                </View>
             </ScrollView>
             <View style={styles.sectionHeader}>
                 <Text style={styles.sectionHeaderText}>New</Text>
             </View>
-            <ScrollView style={[styles.scrollView]} horizontal showsHorizontalScrollIndicator={false}>
-                <WebtoonCards webtoons={newWebtoons} navigation={navigation}/>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <View style={styles.cardContainer}>
+                    {newWebtoons.map((webtoon, index) => (
+                        <WebtoonCard
+                            key={index}
+                            uri={webtoon.imageUrl}
+                            webtoonName={webtoon.name}
+                            onPress={() => {navigation.navigate('WebtoonStack', { 
+                                screen: "WebtoonDetailsScreen", 
+                                params: {webtoon: webtoon}
+                            })}}
+                        />
+                    ))}
+                </View>
             </ScrollView>
         </View>
     );
@@ -58,6 +81,9 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
     },
-    scrollView: {
+    cardContainer: {
+        flexDirection: 'row',
+        paddingHorizontal: 20,
+        flexWrap: 'wrap',
     },
 });
