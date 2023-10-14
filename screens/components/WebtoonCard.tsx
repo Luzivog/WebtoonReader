@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 
 
-const WebtoonCards = ({ uri, webtoonName, onPress }: {
+const WebtoonCard = ({ uri, webtoonName, onPress }: {
 	uri: string,
 	webtoonName: string,
 	onPress: Function
@@ -28,22 +28,25 @@ const styles = StyleSheet.create({
 	card: {
 		backgroundColor: '#101010',
 		borderRadius: 10,
-		marginRight: 15,
 		width: 140,
-	},
+		alignContent: 'center',
+	},	
 	image: {
 		width: '100%',
 		aspectRatio: 9 / 16,
-		borderRadius: 10,
+		borderTopLeftRadius: 10,
+		borderTopRightRadius: 10,
 	},
 	title: {
 		fontSize: 14,
 		fontWeight: 'bold',
 		textAlign: 'center',
+		textAlignVertical: 'center',
 		color: 'white',
-		lineHeight: 20,
-		padding: 5
+		lineHeight: 18,
+		padding: 5,
+		height: (18 * 2) + 10,
 	},
 });
 
-export default WebtoonCards;
+export default WebtoonCard;

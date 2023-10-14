@@ -7,7 +7,7 @@ import DetailItem from "./DetailItem"
 import InfoPopup from "./InfoPopup"
 import AuthOverlay from './AuthOverlay';
 import { WebtoonDetailsScreenNavigationProp } from '../../navigation/stacks/WebtoonStack';
-import { fetchChapterImageUrls, getBase64FromImageUrl, sanitizeFileName } from '../../utils/utils';
+import { deleteFolderRecursive, fetchChapterImageUrls, getBase64FromImageUrl, sanitizeFileName } from '../../utils/utils';
 
 const handleReadChapter = () => {
     // Add logic to handle reading chapter 1
@@ -18,6 +18,8 @@ const handleBookmark = (navigation: WebtoonDetailsScreenNavigationProp) => {
 };
 
 const handleDownload = async (webtoon: Webtoon) => {
+
+    //await deleteFolderRecursive(RNFS.DocumentDirectoryPath + '/downloads/');
 
     const webtoonName = webtoon.apiUrl.slice(1, -1).split("/").join("-");
     const dirPath = RNFS.DocumentDirectoryPath + '/downloads/' + webtoonName + "/";
@@ -31,6 +33,10 @@ const handleDownload = async (webtoon: Webtoon) => {
         await RNFS.writeFile(dirPath + "cover", base64Img);
     };
 
+    // Saving webtoon name
+    if (!(await RNFS.exists(dirPath + "name"))) await RNFS.writeFile(dirPath + "name", webtoon.name);
+    console.log(webtoonName);
+    return
     // Chapter Folder
     const chaptersPath = dirPath + "chapters/";
     if (!await RNFS.exists(chaptersPath)) await RNFS.mkdir(chaptersPath);

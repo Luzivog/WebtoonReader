@@ -31,15 +31,17 @@ export default function HomeScreen({navigation}: {
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 <View style={styles.cardContainer}>
                     {mostViewedWebtoons.map((webtoon, index) => (
-                        <WebtoonCard
-                            key={index}
-                            uri={webtoon.imageUrl}
-                            webtoonName={webtoon.name}
-                            onPress={() => {navigation.navigate('WebtoonStack', { 
-                                screen: "WebtoonDetailsScreen", 
-                                params: {webtoon: webtoon}
-                            })}}
-                        />
+                        <View style={{marginRight: index+1 == mostViewedWebtoons.length? 0 : 14}} key={index}>
+                            <WebtoonCard
+                                key={index}
+                                uri={webtoon.imageUrl}
+                                webtoonName={webtoon.name}
+                                onPress={() => {navigation.navigate('WebtoonStack', { 
+                                    screen: "WebtoonDetailsScreen", 
+                                    params: {webtoon: webtoon}
+                                })}}
+                            />
+                        </View>
                     ))}
                 </View>
             </ScrollView>
@@ -49,15 +51,17 @@ export default function HomeScreen({navigation}: {
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={styles.cardContainer}>
                     {newWebtoons.map((webtoon, index) => (
-                        <WebtoonCard
-                            key={index}
-                            uri={webtoon.imageUrl}
-                            webtoonName={webtoon.name}
-                            onPress={() => {navigation.navigate('WebtoonStack', { 
-                                screen: "WebtoonDetailsScreen", 
-                                params: {webtoon: webtoon}
-                            })}}
-                        />
+                        <View style={{marginRight: index+1 == newWebtoons.length? 0 : 14}} key={index}>
+                            <WebtoonCard
+                                key={index}
+                                uri={webtoon.imageUrl}
+                                webtoonName={webtoon.name}
+                                onPress={() => {navigation.navigate('WebtoonStack', { 
+                                    screen: "WebtoonDetailsScreen", 
+                                    params: {webtoon: webtoon}
+                                })}}
+                            />
+                        </View>
                     ))}
                 </View>
             </ScrollView>

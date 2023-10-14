@@ -1,26 +1,36 @@
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, Dimensions, StatusBar } from 'react-native';
+import { View, StyleSheet, FlatList, Image, Dimensions, StatusBar } from 'react-native';
 import RNFS from 'react-native-fs';
 import { config } from '../utils/config'
+import WebtoonCard from './components/WebtoonCard';
+
+const numColumns = 2;
 
 function DownloadsScreen(): JSX.Element {
 
-    const [covers, setCovers] = useState<string[]>([]);
+    const [webtoons, setWebtoons] = useState<{cover: string, name: string}[]>([]);
     const downloadPath = `${RNFS.DocumentDirectoryPath}/downloads/`;
 
     useEffect(() => {
         const fetchCovers = async (downloadPath: string): Promise<void> => {
             try {
                 const webtoonFiles = await RNFS.readDir(downloadPath);
-                const coverPromises = webtoonFiles.map(async (webtoonFile) => {
-                    const coverPath = `${downloadPath}${webtoonFile.name}/cover`;
-                    if (await RNFS.exists(coverPath)) return RNFS.readFile(coverPath);
+                const webtoonPromises = webtoonFiles.map(async (webtoonFile) => {
+                    const webtoonPath = `${downloadPath}${webtoonFile.name}`;
+                    if (await RNFS.exists(webtoonPath+"/cover") && await RNFS.exists(webtoonPath+"/name")) return {
+                        cover: await RNFS.readFile(webtoonPath+"/cover"),
+                        name: await RNFS.readFile(webtoonPath+"/name")
+                    };
                     return null;
                 });
         
-                const covers = await Promise.all(coverPromises);
-                const coversFetched = covers.filter((cover): cover is string => cover !== null);
-                setCovers(coversFetched);
+                const webtoons = await Promise.all(webtoonPromises);
+                const webtoonsFetched = webtoons.filter((webtoon): webtoon is {cover: string, name: string} => 
+                    webtoon !== null && webtoon !== undefined &&
+                    typeof webtoon.cover === 'string' && 
+                    typeof webtoon.name === 'string'
+                );
+                setWebtoons(webtoonsFetched);
             } catch (error) {
                 console.error('An error occurred while fetching covers:', error);
             }
@@ -28,22 +38,21 @@ function DownloadsScreen(): JSX.Element {
         fetchCovers(downloadPath)
     }, []);
 
-    const renderItem = ({ item }: {item: string}) => (
-        <View style={styles.item}>
-            <Image
-                style={styles.image}
-                source={{ uri: item }}
-            />
-        </View>
-    );
+    webtoons.forEach(w => console.log(w.name));
 
     return (
         <View style={styles.container}>
             <FlatList
-                data={covers}
-                renderItem={renderItem}
+                data={webtoons}
+                renderItem={({ item }: {item: {cover: string, name: string}}) => {
+                    return (
+                    <View style={styles.item}>
+                        <WebtoonCard uri={item.cover} webtoonName={item.name} onPress={()=>{}}/>
+                    </View>
+                )}}
                 keyExtractor={(item, index) => index.toString()}
-                numColumns={2}
+                columnWrapperStyle={{justifyContent:'space-between'}}
+                numColumns={numColumns}
                 contentContainerStyle={styles.list}
             />
         </View>
@@ -51,26 +60,25 @@ function DownloadsScreen(): JSX.Element {
 };
 
 
-const numColumns = 2;
 const screenWidth = Dimensions.get('window').width;
-const imageSize = (screenWidth - 30) / numColumns; // Assuming 10 padding on both sides and in between items
+const imageSize = (screenWidth - 30) / numColumns;
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
         backgroundColor: '#252525',
-        paddingBottom: 20
+        paddingBottom: 20,
     },
     list: {
         marginTop: config.StatusBarHeight,
         paddingHorizontal: 10,
+        backgroundColor: "yellow",
     },
     item: {
-        padding: 10,
         width: imageSize,
         height: imageSize * (16 / 9),
+        backgroundColor: 'green',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     image: {
         aspectRatio: 9 / 16,
