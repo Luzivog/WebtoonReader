@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { View, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, FlatList, ActivityIndicator, Text } from 'react-native';
 import RNFS from 'react-native-fs';
 import WebtoonCard from './components/WebtoonCard';
 import { StatusBarHeight, vh, vw } from '../utils/config';
 import { useIsFocused } from '@react-navigation/native';
+import LoadingScreen from './LoadingScreen';
 
 const numColumns = 2;
 
@@ -11,6 +12,7 @@ function DownloadsScreen(): JSX.Element {
 
     const isFocused = useIsFocused();
     const [webtoons, setWebtoons] = useState<{cover: string, name: string}[]>([]);
+    const [loaded, setLoaded] = useState(false);
     const downloadPath = `${RNFS.DocumentDirectoryPath}/downloads/`;
 
     useEffect(() => {
@@ -28,9 +30,9 @@ function DownloadsScreen(): JSX.Element {
                         return null;
                     });
 
-                    console.log('before fetch');
+
                     const webtoons = await Promise.all(webtoonPromises);
-                    console.log("after fetch");
+
                     const webtoonsFetched = webtoons.filter((webtoon): webtoon is {cover: string, name: string} => 
                         webtoon !== null && webtoon !== undefined &&
                         typeof webtoon.cover === 'string' && 
@@ -38,11 +40,9 @@ function DownloadsScreen(): JSX.Element {
                     );
                     if (webtoonsFetched.length % 2 != 0) webtoonsFetched.push({cover: '', name: ''});
                     setWebtoons(webtoonsFetched);
-                } catch (error) {
-                    console.error('An error occurred while fetching covers:', error);
-                }
+                } catch {};
+                setLoaded(true);
             };
-            console.log('refreshed');
             fetchCovers(downloadPath);
         };
     }, [isFocused]);
@@ -50,13 +50,11 @@ function DownloadsScreen(): JSX.Element {
     return (
         <View style={styles.container}>
             {
-                webtoons.length === 0 ? 
-                (
-                    <View style={styles.loadingContainer}>
-                        <ActivityIndicator size="large" color='tomato' />
+                !loaded ? (<LoadingScreen/>) : webtoons.length == 0 ? (
+                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 26, fontWeight: 'bold', color: 'white'  }}>Nothing downloaded</Text>
                     </View>
-                ) :
-                (
+                ) : (
                     <FlatList
                         data={webtoons}
                         renderItem={({ item }: {item: {cover: string, name: string}}) => {

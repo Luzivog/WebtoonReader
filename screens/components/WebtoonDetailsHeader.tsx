@@ -20,7 +20,6 @@ const handleBookmark = (navigation: WebtoonDetailsScreenNavigationProp) => {
 const handleDownload = async (webtoon: Webtoon) => {
 
     //await deleteFolderRecursive(RNFS.DocumentDirectoryPath + '/downloads/');
-
     const webtoonName = webtoon.apiUrl.slice(1, -1).split("/").join("-");
     const dirPath = RNFS.DocumentDirectoryPath + '/downloads/' + webtoonName + "/";
 

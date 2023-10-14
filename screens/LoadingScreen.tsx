@@ -1,8 +1,9 @@
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, ActivityIndicator } from "react-native";
 
 export default function LoadingScreen() {
     return (
         <View style={styles.loadingContainer}>
+			<ActivityIndicator size="large" color='tomato' />
         </View>
     );
 }
