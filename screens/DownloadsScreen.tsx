@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { View, StyleSheet, FlatList, Image, Dimensions, StatusBar } from 'react-native';
 import RNFS from 'react-native-fs';
 import WebtoonCard from './components/WebtoonCard';
-import { StatusBarHeight, navigationBarHeight, vw } from '../utils/config';
+import { StatusBarHeight, navigationBarHeight, vh, vw } from '../utils/config';
 
 const numColumns = 2;
 
@@ -70,12 +70,12 @@ const styles = StyleSheet.create({
     },
     list: {
         marginTop: StatusBarHeight,
-        paddingBottom: navigationBarHeight,
-        backgroundColor: "yellow",
+        paddingBottom: 5*vh
     },
     item: {
         justifyContent: 'center',
         alignItems: 'center',
+        marginVertical: 1*vh
     },
     image: {
         aspectRatio: 9 / 16,
