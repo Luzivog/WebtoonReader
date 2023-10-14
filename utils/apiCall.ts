@@ -5,7 +5,7 @@ export async function createUser(username: string, password: string): Promise<an
     const options = {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({
             username: username,
@@ -13,17 +13,17 @@ export async function createUser(username: string, password: string): Promise<an
         })
     };
 
-	fetch(API_URL+'users', options)
+    fetch(API_URL + 'users', options)
         .then(response => response.json())
         .then(data => {
             console.log('Response:', data);
         })
         .catch(error => {
-        console.error('Error:', error);
-    });
+            console.error('Error:', error);
+        });
 };
 
-export async function getUser(options : string[]): Promise<any> {
+export async function getUser(options: string[]): Promise<any> {
 
 
 };

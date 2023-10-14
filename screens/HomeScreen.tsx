@@ -7,10 +7,10 @@ import { HomeScreenNavigationProp } from '../navigation/stacks/HomeStack';
 import WebtoonCard from './components/WebtoonCard';
 import { StatusBarHeight } from '../utils/config';
 
-export default function HomeScreen({navigation}: {
-        navigation: HomeScreenNavigationProp, 
-    }): JSX.Element {
-                
+export default function HomeScreen({ navigation }: {
+    navigation: HomeScreenNavigationProp,
+}): JSX.Element {
+
     const [webtoons, setWebtoons] = useState<Webtoon[]>([]);
 
     useEffect(() => {
@@ -25,21 +25,23 @@ export default function HomeScreen({navigation}: {
 
     return (
         <View style={styles.container}>
-            <View style={[styles.sectionHeader, {marginTop: 10}]}>
+            <View style={[styles.sectionHeader, { marginTop: 10 }]}>
                 <Text style={styles.sectionHeaderText}>Most Viewed Today</Text>
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 <View style={styles.cardContainer}>
                     {mostViewedWebtoons.map((webtoon, index) => (
-                        <View style={{marginRight: index+1 == mostViewedWebtoons.length? 0 : 14}} key={index}>
+                        <View style={{ marginRight: index + 1 == mostViewedWebtoons.length ? 0 : 14 }} key={index}>
                             <WebtoonCard
                                 key={index}
                                 uri={webtoon.imageUrl}
                                 webtoonName={webtoon.name}
-                                onPress={() => {navigation.navigate('WebtoonStack', { 
-                                    screen: "WebtoonDetailsScreen", 
-                                    params: {webtoon: webtoon}
-                                })}}
+                                onPress={() => {
+                                    navigation.navigate('WebtoonStack', {
+                                        screen: "WebtoonDetailsScreen",
+                                        params: { webtoon: webtoon }
+                                    })
+                                }}
                             />
                         </View>
                     ))}
@@ -49,17 +51,19 @@ export default function HomeScreen({navigation}: {
                 <Text style={styles.sectionHeaderText}>New</Text>
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            <View style={styles.cardContainer}>
+                <View style={styles.cardContainer}>
                     {newWebtoons.map((webtoon, index) => (
-                        <View style={{marginRight: index+1 == newWebtoons.length? 0 : 14}} key={index}>
+                        <View style={{ marginRight: index + 1 == newWebtoons.length ? 0 : 14 }} key={index}>
                             <WebtoonCard
                                 key={index}
                                 uri={webtoon.imageUrl}
                                 webtoonName={webtoon.name}
-                                onPress={() => {navigation.navigate('WebtoonStack', { 
-                                    screen: "WebtoonDetailsScreen", 
-                                    params: {webtoon: webtoon}
-                                })}}
+                                onPress={() => {
+                                    navigation.navigate('WebtoonStack', {
+                                        screen: "WebtoonDetailsScreen",
+                                        params: { webtoon: webtoon }
+                                    })
+                                }}
                             />
                         </View>
                     ))}

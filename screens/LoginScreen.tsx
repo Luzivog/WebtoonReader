@@ -5,14 +5,14 @@ import { LoginScreenNavigationProp } from '../navigation/stacks/WebtoonStack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { StatusBarHeight } from '../utils/config';
 
-function LoginScreen({ navigation } : {navigation: LoginScreenNavigationProp}): JSX.Element {
+function LoginScreen({ navigation }: { navigation: LoginScreenNavigationProp }): JSX.Element {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [isPasswordVisible, setIsPasswordVisible] = useState(false); // Track password visibility
 
     const handleLogin = async () => {
         console.log("Loging in with the following username and password:", username, password);
-        
+
     };
 
     const handleRegister = () => {

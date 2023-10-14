@@ -11,7 +11,7 @@ const InfoPopup = ({ details, setPopupVisible }: {
   return (
     <View style={styles.popupBackground}>
       <TouchableWithoutFeedback onPress={() => setPopupVisible(false)}>
-        <View style={{width: "100%", height: "100%", position: 'absolute', left: 0, top: 0}}></View>
+        <View style={{ width: "100%", height: "100%", position: 'absolute', left: 0, top: 0 }}></View>
       </TouchableWithoutFeedback>
       <View style={styles.popupContainer}>
         <View style={styles.headerContainer}>

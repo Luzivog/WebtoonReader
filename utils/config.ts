@@ -10,13 +10,14 @@ export const defaultDetails = {
     views: "Error",
     bookmarks: "Error",
     status: "Error",
-    summary: "Error: Couldn't fetch summary", 
+    summary: "Error: Couldn't fetch summary",
 };
 
 export const CustomDarkTheme = {
     ...DarkTheme,
     colors: {
-      ...DarkTheme.colors, background: '#252525'},
+        ...DarkTheme.colors, background: '#252525'
+    },
 };
 
 export const StatusBarHeight = StatusBar.currentHeight ? StatusBar.currentHeight : 0;

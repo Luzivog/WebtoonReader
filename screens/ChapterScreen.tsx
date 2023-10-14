@@ -52,8 +52,8 @@ const windowWidth = Dimensions.get('window').width;
 export default function ChapterScreen({ navigation, route }: {
     navigation: ChapterScreenNavigationProp,
     route: ChapterScreenRouteProp
-}) {    
-    const { webtoon, chapter }: {webtoon: Webtoon, chapter: Chapter} = route.params;
+}) {
+    const { webtoon, chapter }: { webtoon: Webtoon, chapter: Chapter } = route.params;
 
     const [isLoading, setIsLoading] = useState(true);
     const [html, setHtml] = useState("");
@@ -62,18 +62,18 @@ export default function ChapterScreen({ navigation, route }: {
     useEffect(() => {
         (async () => {
             const urls = await fetchChapterImageUrls(webtoon, chapter);
-    
+
             let localHtml = `<html>`
             localHtml += "<body style='margin: 0 !important;padding: 0 !important;'>";
-            for (let url of urls) localHtml+="<div style='width: 100%;'><img style='width: 100%; height: auto;' src='"+url+"'></div>";
+            for (let url of urls) localHtml += "<div style='width: 100%;'><img style='width: 100%; height: auto;' src='" + url + "'></div>";
             localHtml += "</body></html>";
-    
+
             setHtml(localHtml);
             setIsLoading(false);
         })();
     }, [webtoon, chapter]);
 
-    if (isLoading) return <LoadingScreen/>;
+    if (isLoading) return <LoadingScreen />;
 
     const messageManager = ({ nativeEvent: { data } }: { nativeEvent: { data: string } }) => {
         if (data === "clicked") setOverlayVisible(!overlayVisible);
@@ -81,21 +81,21 @@ export default function ChapterScreen({ navigation, route }: {
 
     return (
         <View style={styles.container}>
-            <StatusBar hidden={!overlayVisible}/>
+            <StatusBar hidden={!overlayVisible} />
 
-            <WebView 
-                source={{html:html}}
+            <WebView
+                source={{ html: html }}
                 style={styles.webView}
                 bounces={false}
                 scrollEnabled={true}
-                onScroll={() => {if(overlayVisible) setOverlayVisible(false)}}
+                onScroll={() => { if (overlayVisible) setOverlayVisible(false) }}
                 injectedJavaScript={injectedJavaScript}
                 onMessage={(nativeEvent) => messageManager(nativeEvent)}
             />
 
-    
+
             {overlayVisible && (
-                <ChapterScreenOverlay navigation={navigation} webtoon={webtoon} chapter={chapter}/>
+                <ChapterScreenOverlay navigation={navigation} webtoon={webtoon} chapter={chapter} />
             )}
 
         </View>

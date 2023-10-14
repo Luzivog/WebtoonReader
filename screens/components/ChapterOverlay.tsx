@@ -7,11 +7,11 @@ import { StatusBarHeight } from "../../utils/config";
 export default function ChapterScreenOverlay({ navigation, webtoon, chapter }: {
     navigation: ChapterScreenNavigationProp,
     webtoon: Webtoon,
-    chapter: {name: string, released: string, url: string}
+    chapter: { name: string, released: string, url: string }
 }) {
     const chapterIndex = webtoon.chapters.indexOf(chapter);
 
-    const NavigationButton = ({ iconName, direction } : {iconName: string, direction: string}) => {
+    const NavigationButton = ({ iconName, direction }: { iconName: string, direction: string }) => {
         const isButtonVisible = direction === 'next'
             ? chapterIndex > 0
             : chapterIndex != webtoon.chapters.length - 1;
@@ -23,15 +23,15 @@ export default function ChapterScreenOverlay({ navigation, webtoon, chapter }: {
         if (isButtonVisible) {
             return (
                 <TouchableOpacity onPress={() => navigation.navigate("ChapterScreen", { webtoon, chapter: navigateTo })}>
-                    <Ionicons name={iconName} style={styles.icon}/>
+                    <Ionicons name={iconName} style={styles.icon} />
                 </TouchableOpacity>
             );
-        } else return (<View/>);
+        } else return (<View />);
     }
 
-    const UtilityButton = ({ iconName, onPress } : {iconName: string, onPress: () => void}) => (
+    const UtilityButton = ({ iconName, onPress }: { iconName: string, onPress: () => void }) => (
         <TouchableOpacity onPress={onPress}>
-            <Ionicons name={iconName} style={[styles.icon, {fontSize: 30}]} />
+            <Ionicons name={iconName} style={[styles.icon, { fontSize: 30 }]} />
         </TouchableOpacity>
     );
 

@@ -33,7 +33,7 @@ const WebtoonDetailsScreen = ({ navigation, route }: {
 	route: WebtoonDetailsScreenRouteProp
 }) => {
 
-	const { webtoon }: {webtoon: Webtoon} = route.params;
+	const { webtoon }: { webtoon: Webtoon } = route.params;
 	const [isLoading, setIsLoading] = useState(true);
 	const [isPopupVisible, setPopupVisible] = useState(false);
 	const [isAuthOverlayVisible, toggleAuthOverlay] = useState(false);
@@ -68,7 +68,7 @@ const WebtoonDetailsScreen = ({ navigation, route }: {
 				ListHeaderComponent={
 					WebtoonDetailHeader(navigation, webtoon, isPopupVisible, isAuthOverlayVisible, setPopupVisible, toggleAuthOverlay)
 				}
-				renderItem={({item: chapter}) => (
+				renderItem={({ item: chapter }) => (
 					<RenderItem
 						item={chapter}
 						onPress={() => navigation.navigate('ChapterScreen', { webtoon: webtoon, chapter: chapter })}

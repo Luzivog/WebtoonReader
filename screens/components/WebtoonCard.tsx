@@ -12,7 +12,7 @@ const WebtoonCard = ({ uri, webtoonName, onPress, width }: {
 
 	return (
 		<TouchableOpacity
-			style={[styles.card, {width: width}]}
+			style={[styles.card, { width: width }]}
 			onPress={() => { onPress() }}
 		>
 			<FastImage
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
 		backgroundColor: '#101010',
 		borderRadius: 10,
 		alignContent: 'center',
-	},	
+	},
 	image: {
 		width: '100%',
 		aspectRatio: 9 / 16,
@@ -50,6 +50,6 @@ const styles = StyleSheet.create({
 	},
 });
 
-WebtoonCard.defaultProps = {width: 36*vw};
+WebtoonCard.defaultProps = { width: 36 * vw };
 
 export default WebtoonCard;

@@ -11,7 +11,7 @@ const numColumns = 2;
 function DownloadsScreen(): JSX.Element {
 
     const isFocused = useIsFocused();
-    const [webtoons, setWebtoons] = useState<{cover: string, name: string}[]>([]);
+    const [webtoons, setWebtoons] = useState<{ cover: string, name: string }[]>([]);
     const [loaded, setLoaded] = useState(false);
     const downloadPath = `${RNFS.DocumentDirectoryPath}/downloads/`;
 
@@ -25,52 +25,51 @@ function DownloadsScreen(): JSX.Element {
                         const webtoonPathFiles = (await RNFS.readDir(webtoonPath)).map(f => f.name);
                         if (webtoonPathFiles.includes('cover') && webtoonPathFiles.includes('name')) return {
                             cover: `file://${webtoonPath}/cover`,
-                            name: await RNFS.readFile(webtoonPath+"/name")
+                            name: await RNFS.readFile(webtoonPath + "/name")
                         };
                         return null;
                     });
 
-
                     const webtoons = await Promise.all(webtoonPromises);
 
-                    const webtoonsFetched = webtoons.filter((webtoon): webtoon is {cover: string, name: string} => 
+                    const webtoonsFetched = webtoons.filter((webtoon): webtoon is { cover: string, name: string } =>
                         webtoon !== null && webtoon !== undefined &&
-                        typeof webtoon.cover === 'string' && 
+                        typeof webtoon.cover === 'string' &&
                         typeof webtoon.name === 'string'
                     );
-                    if (webtoonsFetched.length % 2 != 0) webtoonsFetched.push({cover: '', name: ''});
+                    if (webtoonsFetched.length % 2 != 0) webtoonsFetched.push({ cover: '', name: '' });
                     setWebtoons(webtoonsFetched);
-                } catch {};
+                } catch { };
                 setLoaded(true);
             };
             fetchCovers(downloadPath);
         };
     }, [isFocused]);
-    
+
     return (
         <View style={styles.container}>
             {
-                !loaded ? (<LoadingScreen/>) : webtoons.length == 0 ? (
+                !loaded ? (<LoadingScreen />) : webtoons.length == 0 ? (
                     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                        <Text style={{ fontSize: 26, fontWeight: 'bold', color: 'white'  }}>Nothing downloaded</Text>
+                        <Text style={{ fontSize: 26, fontWeight: 'bold', color: 'white' }}>Nothing downloaded</Text>
                     </View>
                 ) : (
                     <FlatList
                         data={webtoons}
-                        renderItem={({ item }: {item: {cover: string, name: string}}) => {
+                        renderItem={({ item }: { item: { cover: string, name: string } }) => {
                             return item.name != '' ? (
                                 <View style={styles.item}>
-                                    <WebtoonCard 
+                                    <WebtoonCard
                                         uri={item.cover}
                                         webtoonName={item.name}
-                                        width={42*vw}
-                                        onPress={()=>{}}
+                                        width={42 * vw}
+                                        onPress={() => { }}
                                     />
                                 </View>
-                            ) : (<View style={{width: 42*vw}}/>)
+                            ) : (<View style={{ width: 42 * vw }} />)
                         }}
                         keyExtractor={(_, index) => index.toString()}
-                        columnWrapperStyle={{justifyContent:'space-evenly'}}
+                        columnWrapperStyle={{ justifyContent: 'space-evenly' }}
                         numColumns={numColumns}
                         contentContainerStyle={styles.list}
                         initialNumToRender={webtoons.length}
@@ -93,12 +92,12 @@ const styles = StyleSheet.create({
     },
     list: {
         marginTop: StatusBarHeight,
-        paddingBottom: 5*vh
+        paddingBottom: 5 * vh
     },
     item: {
         justifyContent: 'center',
         alignItems: 'center',
-        marginVertical: 1*vh
+        marginVertical: 1 * vh
     },
     image: {
         aspectRatio: 9 / 16,

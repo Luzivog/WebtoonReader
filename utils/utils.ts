@@ -25,11 +25,11 @@ export async function loadMainWebtoons(): Promise<Webtoon[]> {
 	const htmlRes = parse(await fetchHtmlRes('https://www.mangageko.com/jumbo/manga/')).removeWhitespace();
 
 	const novelItems = htmlRes.querySelectorAll('li[class="swiper-slide novel-item"]');
-    let names = novelItems.map((parent) => (parent.firstChild as HTMLElement).getAttribute('title') || defaultTitle);
-    let apiUrls = novelItems.map((parent) => (parent.firstChild as HTMLElement).getAttribute('href') || '');
-    let imageUrls = htmlRes.querySelectorAll('img[data-src]').slice(0,24).map(element => element.getAttribute('data-src') || defaultImage)
+	let names = novelItems.map((parent) => (parent.firstChild as HTMLElement).getAttribute('title') || defaultTitle);
+	let apiUrls = novelItems.map((parent) => (parent.firstChild as HTMLElement).getAttribute('href') || '');
+	let imageUrls = htmlRes.querySelectorAll('img[data-src]').slice(0, 24).map(element => element.getAttribute('data-src') || defaultImage)
 
-	for (let i = 0; i<24; i++) mainWebtoons.push(new Webtoon(names[i], imageUrls[i], apiUrls[i]));
+	for (let i = 0; i < 24; i++) mainWebtoons.push(new Webtoon(names[i], imageUrls[i], apiUrls[i]));
 
 	return mainWebtoons;
 }
@@ -37,9 +37,9 @@ export async function loadMainWebtoons(): Promise<Webtoon[]> {
 export async function updateWebtoonChapters(webtoon: Webtoon, parsedHtml: HTMLElement): Promise<void> {
 	const chaptersElements = parsedHtml.querySelectorAll('strong[class="chapter-title"]');
 	const chapterUrls = parsedHtml.querySelectorAll('li[data-chapterno]');
-    const chapterDetails = [];
+	const chapterDetails = [];
 
-	for (let i=0;i<chaptersElements.length;i++) {
+	for (let i = 0; i < chaptersElements.length; i++) {
 		chapterDetails.push({
 			name: chaptersElements[i].innerText.trim(),
 			released: chaptersElements[i].nextElementSibling.innerText,
@@ -52,23 +52,23 @@ export async function updateWebtoonChapters(webtoon: Webtoon, parsedHtml: HTMLEl
 
 export async function fetchWebtoonDetails(webtoon: Webtoon): Promise<void> {
 
-	const htmlDetails = await fetchHtmlRes('https://www.mangageko.com'+webtoon.apiUrl);
-	const parsedDetails= parse(htmlDetails).removeWhitespace();
+	const htmlDetails = await fetchHtmlRes('https://www.mangageko.com' + webtoon.apiUrl);
+	const parsedDetails = parse(htmlDetails).removeWhitespace();
 
 	const stats = parsedDetails.querySelector('div[class="header-stats"]');
 	if (stats == null) { webtoon.details = defaultDetails; return; };
 
 	const statNodes = stats.childNodes;
 	let lastChapter = (statNodes[0] as HTMLElement).firstChild.innerText.split(' ')[1].split('-')[0];
-	
-	if (lastChapter[0] == '0' && lastChapter.length > 1) lastChapter = lastChapter.slice(1); 
-	
+
+	if (lastChapter[0] == '0' && lastChapter.length > 1) lastChapter = lastChapter.slice(1);
+
 	let views = (statNodes[1] as HTMLElement).firstChild.innerText.split(' ').slice(1).join(' ');
 	let bookmarks = (statNodes[2] as HTMLElement).firstChild.innerText.split(' ').slice(1).join(' ');
 	let status = (statNodes[3] as HTMLElement).firstChild.innerText;
 	let summaryNodes = parsedDetails.querySelector('p[class="description"]');
 	let summary = (summaryNodes ? summaryNodes.childNodes.slice(1).map(n => n.innerText) : [defaultDetails.summary]).join('\n').trim();
-	
+
 	if (summary == defaultDetails.summary) {
 		const matchDesc = htmlDetails.match(/<p class="description">(.*?)<\/p>/s);
 		if (matchDesc) summary = matchDesc[1].trim().split("\n").slice(1).join(' ').replaceAll("\r", '').replaceAll("<br>", "\n").trim();
@@ -86,16 +86,16 @@ export async function fetchWebtoonDetails(webtoon: Webtoon): Promise<void> {
 }
 
 export async function fetchAllChapters(webtoon: Webtoon) {
-	const htmlDetails = await fetchHtmlRes('https://www.mangageko.com'+webtoon.apiUrl+'all-chapters/');
-	const parsedDetails= parse(htmlDetails).removeWhitespace();
+	const htmlDetails = await fetchHtmlRes('https://www.mangageko.com' + webtoon.apiUrl + 'all-chapters/');
+	const parsedDetails = parse(htmlDetails).removeWhitespace();
 	updateWebtoonChapters(webtoon, parsedDetails);
 }
 
-export async function fetchChapterImageUrls(webtoon: Webtoon, chapter: {name: string, released: string, url: string}): Promise<any[]> {
+export async function fetchChapterImageUrls(webtoon: Webtoon, chapter: { name: string, released: string, url: string }): Promise<any[]> {
 
 	if (chapter.url == '') return [];
 
-	const htmlRes = await fetchHtmlRes("https://www.mangageko.com"+chapter.url);
+	const htmlRes = await fetchHtmlRes("https://www.mangageko.com" + chapter.url);
 	const data = parse(htmlRes).removeWhitespace();
 
 	const imageUrls = data.querySelectorAll('img[onerror]').map(imgElement => imgElement.getAttribute("src"));
@@ -115,38 +115,38 @@ export function sanitizeFileName(fileName: string): string {
 	return sanitizedFileName;
 };
 
-export async function deleteFolderRecursive (path: string) {
-    if (await RNFS.exists(path)) {
-        const files = await RNFS.readDir(path);
+export async function deleteFolderRecursive(path: string) {
+	if (await RNFS.exists(path)) {
+		const files = await RNFS.readDir(path);
 
-        for (const file of files) {
-            if (file.isDirectory()) {
-                await deleteFolderRecursive(file.path);
-            } else {
-                await RNFS.unlink(file.path);
-            }
-        }
+		for (const file of files) {
+			if (file.isDirectory()) {
+				await deleteFolderRecursive(file.path);
+			} else {
+				await RNFS.unlink(file.path);
+			}
+		}
 
-        await RNFS.unlink(path);
-    }
+		await RNFS.unlink(path);
+	}
 };
 
 
 export async function downloadImage(url: string, filePath: string): Promise<boolean> {
 	try {
-	  const response = await fetch(url);
-	  const imageBlob = await response.blob();
-	  const reader = new FileReader();
-  
-	  reader.onloadend = async () => {
-		const base64data = reader.result as string;
-		await RNFS.writeFile(filePath, base64data.split(',')[1], 'base64');
-	  };
-  
-	  reader.readAsDataURL(imageBlob);
-	  return true;
+		const response = await fetch(url);
+		const imageBlob = await response.blob();
+		const reader = new FileReader();
+
+		reader.onloadend = async () => {
+			const base64data = reader.result as string;
+			await RNFS.writeFile(filePath, base64data.split(',')[1], 'base64');
+		};
+
+		reader.readAsDataURL(imageBlob);
+		return true;
 	} catch (err) {
-	  console.error(err);
-	  return false;
+		console.error(err);
+		return false;
 	}
-  }
+}

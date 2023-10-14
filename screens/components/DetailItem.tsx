@@ -4,8 +4,8 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 const DetailItem = ({ icon, text }: { icon: string, text: string }) => (
     <View style={styles.detailItem}>
-      <Ionicons name={icon} style={styles.detailIcon} size={24} />
-      <Text style={styles.detailText}>{text}</Text>
+        <Ionicons name={icon} style={styles.detailIcon} size={24} />
+        <Text style={styles.detailText}>{text}</Text>
     </View>
 );
 
