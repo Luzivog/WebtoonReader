@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Text, StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
 import { vw } from '../../utils/config';
+import FastImage from 'react-native-fast-image';
 
 const WebtoonCard = ({ uri, webtoonName, onPress, width }: {
 	uri: string,
@@ -14,7 +15,7 @@ const WebtoonCard = ({ uri, webtoonName, onPress, width }: {
 			style={[styles.card, {width: width}]}
 			onPress={() => { onPress() }}
 		>
-			<Image
+			<FastImage
 				source={{ uri: uri }}
 				style={styles.image}
 			/>
