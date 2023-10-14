@@ -30,6 +30,7 @@ function DownloadsScreen(): JSX.Element {
                     typeof webtoon.cover === 'string' && 
                     typeof webtoon.name === 'string'
                 );
+                if (webtoonsFetched.length % 2 != 0) webtoonsFetched.push({cover: '', name: ''});
                 setWebtoons(webtoonsFetched);
             } catch (error) {
                 console.error('An error occurred while fetching covers:', error);
@@ -45,16 +46,17 @@ function DownloadsScreen(): JSX.Element {
             <FlatList
                 data={webtoons}
                 renderItem={({ item }: {item: {cover: string, name: string}}) => {
-                    return (
-                    <View style={styles.item}>
-                        <WebtoonCard 
-                            uri={item.cover}
-                            webtoonName={item.name}
-                            width={42*vw}
-                            onPress={()=>{}}
-                        />
-                    </View>
-                )}}
+                    return item.name != '' ? (
+                        <View style={styles.item}>
+                            <WebtoonCard 
+                                uri={item.cover}
+                                webtoonName={item.name}
+                                width={42*vw}
+                                onPress={()=>{}}
+                            />
+                        </View>
+                    ) : (<View style={{width: 42*vw}}/>)
+                }}
                 keyExtractor={(_, index) => index.toString()}
                 columnWrapperStyle={{justifyContent:'space-evenly'}}
                 numColumns={numColumns}
