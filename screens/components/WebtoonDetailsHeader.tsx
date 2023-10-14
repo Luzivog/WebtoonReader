@@ -7,7 +7,7 @@ import DetailItem from "./DetailItem"
 import InfoPopup from "./InfoPopup"
 import AuthOverlay from './AuthOverlay';
 import { WebtoonDetailsScreenNavigationProp } from '../../navigation/stacks/WebtoonStack';
-import { deleteFolderRecursive, fetchChapterImageUrls, getBase64FromImageUrl, sanitizeFileName } from '../../utils/utils';
+import { deleteFolderRecursive, downloadImage, fetchChapterImageUrls, sanitizeFileName } from '../../utils/utils';
 
 const handleReadChapter = () => {
     // Add logic to handle reading chapter 1
@@ -27,15 +27,11 @@ const handleDownload = async (webtoon: Webtoon) => {
     if (!await RNFS.exists(dirPath)) await RNFS.mkdir(dirPath);
 
     // Cover Image Download
-    if (!(await RNFS.exists(dirPath + "cover"))) {
-        const base64Img = await getBase64FromImageUrl(webtoon.imageUrl);
-        await RNFS.writeFile(dirPath + "cover", base64Img);
-    };
+    if (!(await RNFS.exists(dirPath + "cover"))) await downloadImage(webtoon.imageUrl, dirPath + "cover");
 
     // Saving webtoon name
     if (!(await RNFS.exists(dirPath + "name"))) await RNFS.writeFile(dirPath + "name", webtoon.name);
-    console.log(webtoonName);
-    return
+
     // Chapter Folder
     const chaptersPath = dirPath + "chapters/";
     if (!await RNFS.exists(chaptersPath)) await RNFS.mkdir(chaptersPath);
@@ -51,10 +47,8 @@ const handleDownload = async (webtoon: Webtoon) => {
         const imagesUrls = await fetchChapterImageUrls(webtoon, webtoon.chapters[i]);
 
         const downloadPromises = imagesUrls.map(async (imageUrl) => {
-            const base64Img = await getBase64FromImageUrl(imageUrl);
             const imgName = imageUrl.split("/").slice(-1)[0];
-            console.log(`Downloading: ${imgName}`);
-            await RNFS.writeFile(`${chapterPath}${imgName}`, base64Img);
+            await downloadImage(imageUrl, `${chapterPath}${imgName}`);
         });
 
         await Promise.all(downloadPromises);

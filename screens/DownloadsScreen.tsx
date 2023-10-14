@@ -24,7 +24,7 @@ function DownloadsScreen(): JSX.Element {
                         const webtoonPath = `${downloadPath}${webtoonFile.name}`;
                         const webtoonPathFiles = (await RNFS.readDir(webtoonPath)).map(f => f.name);
                         if (webtoonPathFiles.includes('cover') && webtoonPathFiles.includes('name')) return {
-                            cover: await RNFS.readFile(webtoonPath+"/cover"),
+                            cover: `file://${webtoonPath}/cover`,
                             name: await RNFS.readFile(webtoonPath+"/name")
                         };
                         return null;

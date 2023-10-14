@@ -107,12 +107,6 @@ export function isObjectEmpty(obj: { [key: string]: any }): boolean {
 	return Object.keys(obj).length === 0;
 };
 
-export async function getBase64FromImageUrl(url: string): Promise<string> {
-    const response = await axios.get(url, {responseType: 'arraybuffer'});
-    const base64 = Buffer.from(response.data, 'binary').toString('base64');
-    return `data:${response.headers['content-type']};base64,${base64}`;
-};
-
 export function sanitizeFileName(fileName: string): string {
 
 	const invalidCharactersPattern = /[\/\\:*?"<>|]/g;
@@ -136,3 +130,23 @@ export async function deleteFolderRecursive (path: string) {
         await RNFS.unlink(path);
     }
 };
+
+
+export async function downloadImage(url: string, filePath: string): Promise<boolean> {
+	try {
+	  const response = await fetch(url);
+	  const imageBlob = await response.blob();
+	  const reader = new FileReader();
+  
+	  reader.onloadend = async () => {
+		const base64data = reader.result as string;
+		await RNFS.writeFile(filePath, base64data.split(',')[1], 'base64');
+	  };
+  
+	  reader.readAsDataURL(imageBlob);
+	  return true;
+	} catch (err) {
+	  console.error(err);
+	  return false;
+	}
+  }
