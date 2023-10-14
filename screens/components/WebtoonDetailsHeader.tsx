@@ -32,6 +32,9 @@ const handleDownload = async (webtoon: Webtoon) => {
     // Saving webtoon name
     if (!(await RNFS.exists(dirPath + "name"))) await RNFS.writeFile(dirPath + "name", webtoon.name);
 
+    // Saving webtoon summary
+    if (!(await RNFS.exists(dirPath + "summary"))) await RNFS.writeFile(dirPath + "summary", webtoon.details.summary);
+
     // Chapter Folder
     const chaptersPath = dirPath + "chapters/";
     if (!await RNFS.exists(chaptersPath)) await RNFS.mkdir(chaptersPath);
@@ -52,7 +55,7 @@ const handleDownload = async (webtoon: Webtoon) => {
         });
 
         await Promise.all(downloadPromises);
-        await RNFS.writeFile(chapterPath + "done", "");
+        await RNFS.writeFile(chapterPath + "done", '');
 
         console.log(`Finished downloading chapter: ${webtoon.chapters[i].name}`);
     };

@@ -4,7 +4,7 @@ class Webtoon {
 	private _name: string;
 	private _imageUrl: string;
 	private _apiUrl: string;
-	private _details: { [key: string]: string };
+	private _details: {[key: string]: string};
 	private _chapters: Chapter[];
 	private _allChapters: boolean;
 

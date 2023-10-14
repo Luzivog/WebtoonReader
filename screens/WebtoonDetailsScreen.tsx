@@ -7,26 +7,7 @@ import { FlashList } from "@shopify/flash-list";
 import WebtoonDetailHeader from './components/WebtoonDetailsHeader';
 import LoadingScreen from './LoadingScreen';
 import Webtoon from '../utils/Webtoon';
-
-interface RenderItemProps {
-	item: { name: string; released: string; url: string };
-	onPress: () => void;
-}
-
-const RenderItem: React.FC<RenderItemProps> = React.memo(({ item, onPress }) => {
-	return (
-		<TouchableOpacity
-			key={item.name}
-			style={styles.chapterItem}
-			onPress={onPress}
-		>
-			<View style={styles.chapterItemContent}>
-				<Text style={styles.chapterName} numberOfLines={1} ellipsizeMode='tail'>{item.name}</Text>
-				<Text style={styles.chapterReleased}>{item.released}</Text>
-			</View>
-		</TouchableOpacity>
-	);
-});
+import ChapterList from './components/ChapterList';
 
 const WebtoonDetailsScreen = ({ navigation, route }: {
 	navigation: WebtoonDetailsScreenNavigationProp,
@@ -59,60 +40,12 @@ const WebtoonDetailsScreen = ({ navigation, route }: {
 	if (isLoading) return <LoadingScreen />;
 
 	return (
-		<View style={styles.chaptersContainer}>
-			<FlashList
-				data={chapters}
-				extraData={chapters}
-				removeClippedSubviews={true}
-				estimatedItemSize={50}
-				ListHeaderComponent={
-					WebtoonDetailHeader(navigation, webtoon, isPopupVisible, isAuthOverlayVisible, setPopupVisible, toggleAuthOverlay)
-				}
-				renderItem={({ item: chapter }) => (
-					<RenderItem
-						item={chapter}
-						onPress={() => navigation.navigate('ChapterScreen', { webtoon: webtoon, chapter: chapter })}
-					/>
-				)}
-			/>
-		</View>
+		<ChapterList
+			chapters={chapters}
+			header={WebtoonDetailHeader(navigation, webtoon, isPopupVisible, isAuthOverlayVisible, setPopupVisible, toggleAuthOverlay)}
+			onPress={(chapter: { name: string; released: string, url: string }) => navigation.navigate('ChapterScreen', { webtoon: webtoon, chapter: chapter })}			
+		/>
 	);
 };
-
-const styles = StyleSheet.create({
-	chaptersContainer: {
-		marginTop: StatusBar.currentHeight,
-		alignContent: 'center',
-		width: '100%',
-		height: '100%',
-		paddingBottom: 30,
-	},
-	chapterItem: {
-		height: 50,
-		backgroundColor: '#353535',
-		borderRadius: 5,
-		paddingHorizontal: 10,
-		paddingVertical: 15,
-		marginBottom: 10,
-		width: '95%',
-		alignSelf: 'center',
-	},
-	chapterItemContent: {
-		flexDirection: 'row',
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
-	chapterName: {
-		color: 'white',
-		fontSize: 16,
-		flex: 0.5,
-	},
-	chapterReleased: {
-		color: 'white',
-		fontSize: 14,
-		textAlign: 'right',
-		flex: 0.5,
-	},
-});
 
 export default WebtoonDetailsScreen;

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteProp } from '@react-navigation/native';
 import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack';
 import WebtoonDetailsScreen from '../../screens/WebtoonDetailsScreen';
-import Webtoon from '../Webtoon';
+import Webtoon from '../../utils/Webtoon';
 import ChapterScreen from '../../screens/ChapterScreen';
 import RegisterScreen from '../../screens/RegisterScreen';
 import LoginScreen from '../../screens/LoginScreen';
