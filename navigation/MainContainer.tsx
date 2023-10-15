@@ -6,8 +6,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 // Screens
 import SearchScreen from '../screens/SearchScreen';
 import BookmarksScreen from '../screens/BookmarksScreen';
-import DownloadsScreens from '../screens/DownloadsScreen';
 import HomeStack from './stacks/HomeStack';
+import DownloadsStack from './stacks/DownloadsStack';
 import { CustomDarkTheme, navigationBarHeight } from '../utils/config';
 import { StatusBar, View } from 'react-native';
 
@@ -47,7 +47,7 @@ function MainContainer() {
 					<Tab.Screen name={homeName} component={HomeStack} />
 					<Tab.Screen name={searchName} component={SearchScreen} />
 					<Tab.Screen name={bookmarksName} component={BookmarksScreen} />
-					<Tab.Screen name={downloadsName} component={DownloadsScreens} />
+					<Tab.Screen name={downloadsName} component={DownloadsStack} />
 
 				</Tab.Navigator>
 			</NavigationContainer>

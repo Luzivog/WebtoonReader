@@ -5,13 +5,23 @@ import WebtoonCard from './components/WebtoonCard';
 import { StatusBarHeight, vh, vw } from '../utils/config';
 import { useIsFocused } from '@react-navigation/native';
 import LoadingScreen from './LoadingScreen';
+import { DownloadsScreenNavigationProp } from '../navigation/stacks/DownloadsStack';
 
 const numColumns = 2;
 
-function DownloadsScreen(): JSX.Element {
+export type DownloadedWebtoonData = {
+    formattedName: string,
+    name: string;
+    summary: string;
+    cover: string
+};
+
+function DownloadsScreen({ navigation }: {
+    navigation: DownloadsScreenNavigationProp
+}): JSX.Element {
 
     const isFocused = useIsFocused();
-    const [webtoons, setWebtoons] = useState<{ cover: string, name: string }[]>([]);
+    const [webtoons, setWebtoons] = useState<DownloadedWebtoonData[]>([]);
     const [loaded, setLoaded] = useState(false);
     const downloadPath = `${RNFS.DocumentDirectoryPath}/downloads/`;
 
@@ -23,21 +33,28 @@ function DownloadsScreen(): JSX.Element {
                     const webtoonPromises = webtoonFiles.map(async (webtoonFile) => {
                         const webtoonPath = `${downloadPath}${webtoonFile.name}`;
                         const webtoonPathFiles = (await RNFS.readDir(webtoonPath)).map(f => f.name);
-                        if (webtoonPathFiles.includes('cover') && webtoonPathFiles.includes('name')) return {
+                        if (webtoonPathFiles.includes('cover')
+                            && webtoonPathFiles.includes('name')
+                            && webtoonPathFiles.includes('summary')
+                        ) return {
                             cover: `file://${webtoonPath}/cover`,
-                            name: await RNFS.readFile(webtoonPath + "/name")
+                            name: await RNFS.readFile(webtoonPath + "/name"),
+                            formattedName: webtoonFile.name,
+                            summary: await RNFS.readFile(webtoonPath + "/summary"),
                         };
                         return null;
                     });
 
                     const webtoons = await Promise.all(webtoonPromises);
 
-                    const webtoonsFetched = webtoons.filter((webtoon): webtoon is { cover: string, name: string } =>
+                    const webtoonsFetched = webtoons.filter((webtoon): webtoon is DownloadedWebtoonData =>
                         webtoon !== null && webtoon !== undefined &&
                         typeof webtoon.cover === 'string' &&
                         typeof webtoon.name === 'string'
                     );
-                    if (webtoonsFetched.length % 2 != 0) webtoonsFetched.push({ cover: '', name: '' });
+                    if (webtoonsFetched.length % 2 != 0) webtoonsFetched.push({
+                        cover: '', name: '', formattedName: '', summary: ''
+                    });
                     setWebtoons(webtoonsFetched);
                 } catch { };
                 setLoaded(true);
@@ -56,14 +73,16 @@ function DownloadsScreen(): JSX.Element {
                 ) : (
                     <FlatList
                         data={webtoons}
-                        renderItem={({ item }: { item: { cover: string, name: string } }) => {
+                        renderItem={({ item }: { item: DownloadedWebtoonData }) => {
                             return item.name != '' ? (
                                 <View style={styles.item}>
                                     <WebtoonCard
                                         uri={item.cover}
                                         webtoonName={item.name}
                                         width={42 * vw}
-                                        onPress={() => { }}
+                                        onPress={() => {
+                                            navigation.navigate('DownloadsDetailsScreen', item);
+                                        }}
                                     />
                                 </View>
                             ) : (<View style={{ width: 42 * vw }} />)
