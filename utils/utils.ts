@@ -1,8 +1,15 @@
 import Webtoon from "./Webtoon";
 import { parse, HTMLElement } from 'node-html-parser';
-import axios from "axios";
 import RNFS from 'react-native-fs';
 import { defaultDetails, defaultImage, defaultTitle } from "./config";
+import RNFetchBlob from "rn-fetch-blob";
+
+function delay(ms: number): Promise<void> {
+    return new Promise<void>(resolve => {
+        setTimeout(resolve, ms);
+    });
+};
+
 
 /**
  * Fetches the main webtoons by making an HTTP request to a specific URL.
@@ -133,20 +140,24 @@ export async function deleteFolderRecursive(path: string) {
 
 
 export async function downloadImage(url: string, filePath: string): Promise<boolean> {
-	try {
-		const response = await fetch(url);
-		const imageBlob = await response.blob();
-		const reader = new FileReader();
+    try {
+        // Fetch the image
+        const response = await RNFetchBlob.fetch('GET', url);
 
-		reader.onloadend = async () => {
-			const base64data = reader.result as string;
-			await RNFS.writeFile(filePath, base64data.split(',')[1], 'base64');
-		};
-
-		reader.readAsDataURL(imageBlob);
-		return true;
-	} catch (err) {
-		console.error(err);
-		return false;
-	}
+        if (response.respInfo.status === 200) {
+            // Get binary data
+            const base64data = response.base64();
+            // Write binary data to file
+            await RNFetchBlob.fs.writeFile(filePath, base64data, 'base64');
+            return true;
+        } else {
+            console.log('Failed to fetch the image:', response.respInfo.status);
+            await delay(1000);
+            return downloadImage(url, filePath);
+        }
+    } catch (err) {
+        console.log("Error downloading an image: ", err);
+        await delay(1000);
+        return downloadImage(url, filePath);
+    }
 }

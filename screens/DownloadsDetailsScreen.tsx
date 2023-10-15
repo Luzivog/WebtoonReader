@@ -11,7 +11,9 @@ export default function DownloadDetailsScreen({route}:{
 
     return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <Text style={{ fontSize: 26, fontWeight: 'bold', color: 'white' }}>Search Screen</Text>
+            <Text style={{ fontSize: 26, fontWeight: 'bold', color: 'white' }}>
+                {name}
+            </Text>
         </View>
     );
 }
