@@ -1,28 +1,28 @@
 import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { ChapterScreenNavigationProp } from "../../navigation/stacks/WebtoonStack";
-import Webtoon from "../../utils/Webtoon";
+import Webtoon, { Chapter } from "../../utils/Webtoon";
 import { StatusBarHeight } from "../../utils/config";
 
-export default function ChapterScreenOverlay({ navigation, webtoon, chapter }: {
+export default function ChapterScreenOverlay({ navigation, chapters, chapter }: {
     navigation: ChapterScreenNavigationProp,
-    webtoon: Webtoon,
+    chapters: Chapter[],
     chapter: { name: string, released: string, url: string }
 }) {
-    const chapterIndex = webtoon.chapters.indexOf(chapter);
+    const chapterIndex = chapters.indexOf(chapter);
 
     const NavigationButton = ({ iconName, direction }: { iconName: string, direction: string }) => {
         const isButtonVisible = direction === 'next'
             ? chapterIndex > 0
-            : chapterIndex != webtoon.chapters.length - 1;
+            : chapterIndex != chapters.length - 1;
 
         const navigateTo = direction === 'next'
-            ? webtoon.chapters[chapterIndex - 1]
-            : webtoon.chapters[chapterIndex + 1];
+            ? chapters[chapterIndex - 1]
+            : chapters[chapterIndex + 1];
 
         if (isButtonVisible) {
             return (
-                <TouchableOpacity onPress={() => navigation.navigate("ChapterScreen", { webtoon, chapter: navigateTo })}>
+                <TouchableOpacity onPress={() => navigation.navigate("ChapterScreen", { chapters, chapter: navigateTo })}>
                     <Ionicons name={iconName} style={styles.icon} />
                 </TouchableOpacity>
             );

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack';
 import DownloadsScreen from '../../screens/DownloadsScreen';
-import DownloadDetailsScreen from '../../screens/DownloadsDetailsScreen';
 import { RouteProp } from '@react-navigation/native';
+import WebtoonStack from './WebtoonStack';
 
 export type DownloadedWebtoonObject = {
     formattedName: string,
@@ -12,12 +12,12 @@ export type DownloadedWebtoonObject = {
 
 type RootStackParamList = {
     DownloadsScreen: undefined;
-    DownloadsDetailsScreen: DownloadedWebtoonObject;
+    WebtoonStack: { screen: string, params: {webtoon: DownloadedWebtoonObject} };
 };
 
 export type DownloadsScreenNavigationProp = StackNavigationProp<RootStackParamList, 'DownloadsScreen'>;
 
-export type DownloadsDetailsScreenRouteProp = RouteProp<RootStackParamList, 'DownloadsDetailsScreen'>;
+export type WebtoonStackRouteProp = RouteProp<RootStackParamList, 'WebtoonStack'>;
 
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -31,8 +31,8 @@ export default function DownloadsContainer(): JSX.Element {
                 options={{ headerShown: false }}
             />
             <Stack.Screen
-                name="DownloadsDetailsScreen"
-                component={DownloadDetailsScreen}
+                name="WebtoonStack"
+                component={WebtoonStack}
                 options={{ headerShown: false }}
             />
         </Stack.Navigator>

@@ -81,7 +81,10 @@ function DownloadsScreen({ navigation }: {
                                         webtoonName={item.name}
                                         width={42 * vw}
                                         onPress={() => {
-                                            navigation.navigate('DownloadsDetailsScreen', item);
+                                            navigation.navigate('WebtoonStack', {
+                                                screen: "WebtoonDetailsScreen",
+                                                params: { webtoon: item }
+                                            })
                                         }}
                                     />
                                 </View>

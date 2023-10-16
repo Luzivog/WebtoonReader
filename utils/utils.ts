@@ -1,4 +1,4 @@
-import Webtoon from "./Webtoon";
+import Webtoon, { Chapter } from "./Webtoon";
 import { parse, HTMLElement } from 'node-html-parser';
 import RNFS from 'react-native-fs';
 import { defaultDetails, defaultImage, defaultTitle } from "./config";
@@ -98,9 +98,15 @@ export async function fetchAllChapters(webtoon: Webtoon) {
 	updateWebtoonChapters(webtoon, parsedDetails);
 }
 
-export async function fetchChapterImageUrls(webtoon: Webtoon, chapter: { name: string, released: string, url: string }): Promise<any[]> {
+export async function fetchChapterImageUrls(chapter: Chapter): Promise<any[]> {
 
 	if (chapter.url == '') return [];
+
+	if (chapter.released == '') {
+		const dirPath = chapter.url+'images/';
+		const chapterImages = (await RNFS.readDir(dirPath)).map(f => `file://${dirPath+f.name}`);
+		return chapterImages;
+	};
 
 	const htmlRes = await fetchHtmlRes("https://www.mangageko.com" + chapter.url);
 	const data = parse(htmlRes).removeWhitespace();
@@ -108,7 +114,7 @@ export async function fetchChapterImageUrls(webtoon: Webtoon, chapter: { name: s
 	const imageUrls = data.querySelectorAll('img[onerror]').map(imgElement => imgElement.getAttribute("src"));
 
 	return imageUrls ? imageUrls : [];
-}
+};
 
 export function isObjectEmpty(obj: { [key: string]: any }): boolean {
 	return Object.keys(obj).length === 0;

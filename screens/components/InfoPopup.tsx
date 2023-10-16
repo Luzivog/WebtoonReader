@@ -2,9 +2,9 @@ import * as React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, ScrollView } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const InfoPopup = ({ details, setPopupVisible }: {
+const InfoPopup = ({ summary, setPopupVisible }: {
 
-  details: { [key: string]: string } | undefined;
+  summary: string;
   setPopupVisible: (visible: boolean) => void;
 
 }) => {
@@ -21,7 +21,7 @@ const InfoPopup = ({ details, setPopupVisible }: {
           </TouchableOpacity>
         </View>
         <ScrollView contentContainerStyle={styles.popupContent}>
-          <Text style={styles.synopsisText}>{details?.summary}</Text>
+          <Text style={styles.synopsisText}>{summary}</Text>
         </ScrollView>
       </View>
     </View>

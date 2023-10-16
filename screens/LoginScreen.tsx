@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import the icon library
 import { LoginScreenNavigationProp } from '../navigation/stacks/WebtoonStack';

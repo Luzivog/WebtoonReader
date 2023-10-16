@@ -3,6 +3,7 @@ import { createStackNavigator, StackNavigationProp } from '@react-navigation/sta
 import HomeScreen from '../../screens/HomeScreen';
 import Webtoon from '../../utils/Webtoon';
 import WebtoonStack from './WebtoonStack';
+import { DownloadedWebtoonObject } from './DownloadsStack';
 
 type RootStackParamList = {
     HomeScreen: undefined;

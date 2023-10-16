@@ -9,27 +9,38 @@ interface RenderItemProps {
 }
 
 const RenderItem: React.FC<RenderItemProps> = React.memo(({ item, onPress }) => {
-	return (
-		<TouchableOpacity
-			key={item.name}
-			style={styles.chapterItem}
-			onPress={() => onPress(item)}
-		>
-			<View style={styles.chapterItemContent}>
-				<Text style={styles.chapterName} numberOfLines={1} ellipsizeMode='tail'>{item.name}</Text>
-				<Text style={styles.chapterReleased}>{item.released}</Text>
-			</View>
-		</TouchableOpacity>
-	);
+    return (
+        <TouchableOpacity
+            key={item.name}
+            style={styles.chapterItem}
+            onPress={() => onPress(item)}
+        >
+            <View style={styles.chapterItemContent}>
+                <Text 
+                    style={[
+                        styles.chapterName,
+                        item.released === '' ? styles.fullWidth : {}
+                    ]} 
+                    numberOfLines={1} 
+                    ellipsizeMode='tail'
+                >
+                    {item.name}
+                </Text>
+                {item.released !== '' && (
+                    <Text style={styles.chapterReleased}>{item.released}</Text>
+                )}
+            </View>
+        </TouchableOpacity>
+    );
 });
 
-export default function ChapterList({chapters, header, onPress}:{
-    chapters: Chapter[],
-    header: React.JSX.Element,
-    onPress: (chapter: Chapter) => void;
+export default function ChapterList({ chapters, header, onPress }: {
+	chapters: Chapter[],
+	header: React.JSX.Element,
+	onPress: (chapter: Chapter) => void;
 }) {
-    return (
-        <View style={styles.chaptersContainer}>
+	return (
+		<View style={styles.chaptersContainer}>
 			<FlashList
 				data={chapters}
 				extraData={chapters}
@@ -44,7 +55,7 @@ export default function ChapterList({chapters, header, onPress}:{
 				)}
 			/>
 		</View>
-    )
+	)
 }
 
 
@@ -82,4 +93,7 @@ const styles = StyleSheet.create({
 		textAlign: 'right',
 		flex: 0.5,
 	},
+	fullWidth: {
+        flex: 1,
+    },
 });

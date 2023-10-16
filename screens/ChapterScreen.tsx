@@ -53,7 +53,7 @@ export default function ChapterScreen({ navigation, route }: {
     navigation: ChapterScreenNavigationProp,
     route: ChapterScreenRouteProp
 }) {
-    const { webtoon, chapter }: { webtoon: Webtoon, chapter: Chapter } = route.params;
+    const { chapters, chapter }: { chapters: Chapter[], chapter: Chapter } = route.params;
 
     const [isLoading, setIsLoading] = useState(true);
     const [html, setHtml] = useState("");
@@ -61,8 +61,8 @@ export default function ChapterScreen({ navigation, route }: {
 
     useEffect(() => {
         (async () => {
-            const urls = await fetchChapterImageUrls(webtoon, chapter);
-
+            const urls = await fetchChapterImageUrls(chapter);
+            console.log('\n\n\n\n', urls[0]);
             let localHtml = `<html>`
             localHtml += "<body style='margin: 0 !important;padding: 0 !important;'>";
             for (let url of urls) localHtml += "<div style='width: 100%;'><img style='width: 100%; height: auto;' src='" + url + "'></div>";
@@ -71,7 +71,7 @@ export default function ChapterScreen({ navigation, route }: {
             setHtml(localHtml);
             setIsLoading(false);
         })();
-    }, [webtoon, chapter]);
+    }, [chapters, chapter]);
 
     if (isLoading) return <LoadingScreen />;
 
@@ -95,7 +95,7 @@ export default function ChapterScreen({ navigation, route }: {
 
 
             {overlayVisible && (
-                <ChapterScreenOverlay navigation={navigation} webtoon={webtoon} chapter={chapter} />
+                <ChapterScreenOverlay navigation={navigation} chapters={chapters} chapter={chapter} />
             )}
 
         </View>
