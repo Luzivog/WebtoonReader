@@ -39,7 +39,7 @@ const handleDownload = async (webtoon: Webtoon) => {
     const chaptersPath = dirPath + "chapters/";
     if (!await RNFS.exists(chaptersPath)) await RNFS.mkdir(chaptersPath);
 
-    for (let i = /*webtoon.chapters.length - 1*/0; i >= 0; i--) {
+    for (let i = webtoon.chapters.length - 1; i >= 0; i--) {
 
         const chapterName = sanitizeFileName(webtoon.chapters[i].name);
         console.log(`Downloading chapter: ${chapterName}`);
@@ -54,7 +54,6 @@ const handleDownload = async (webtoon: Webtoon) => {
 
         const downloadPromises = imagesUrls.map(async (imageUrl) => {
             const imgName = imageUrl.split("/").slice(-1)[0];
-            console.log(`${imagesPath}${imgName}`);
             await downloadImage(imageUrl, `${imagesPath}${imgName}`);
         });
 
