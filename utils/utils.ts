@@ -104,7 +104,13 @@ export async function fetchChapterImageUrls(chapter: Chapter): Promise<any[]> {
 
 	if (chapter.released == '') {
 		const dirPath = chapter.url+'images/';
-		const chapterImages = (await RNFS.readDir(dirPath)).map(f => `file://${dirPath+f.name}`);
+		const chapterImages = (await RNFS.readDir(dirPath))
+			.map(f => ({
+				uri: `file://${dirPath+f.name}`,
+				index: parseInt(f.name.replace('index_', '').split('.')[0])
+			}))
+			.sort((a, b) => a.index - b.index)
+			.map(f => f.uri);
 		return chapterImages;
 	};
 
