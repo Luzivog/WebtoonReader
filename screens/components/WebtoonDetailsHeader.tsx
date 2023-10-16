@@ -43,23 +43,23 @@ const handleDownload = async (webtoon: Webtoon) => {
 
         const chapterName = sanitizeFileName(webtoon.chapters[i].name);
         console.log(`Downloading chapter: ${chapterName}`);
-
+    
         const chapterPath = `${chaptersPath}${chapterName}/`;
         if (!await RNFS.exists(chapterPath)) await RNFS.mkdir(chapterPath);
-
+    
         const imagesPath = `${chapterPath}images/`;
         if (!await RNFS.exists(imagesPath)) await RNFS.mkdir(imagesPath);
-
+    
         const imagesUrls = await fetchChapterImageUrls(webtoon.chapters[i]);
-
-        const downloadPromises = imagesUrls.map(async (imageUrl) => {
+    
+        for (let j = 0; j < imagesUrls.length; j++) {
+            const imageUrl = imagesUrls[j];
             const imgName = imageUrl.split("/").slice(-1)[0];
             await downloadImage(imageUrl, `${imagesPath}${imgName}`);
-        });
-
-        await Promise.all(downloadPromises);
+        }
+    
         await RNFS.writeFile(chapterPath + "name", webtoon.chapters[i].name);
-
+    
         console.log(`Finished downloading chapter: ${webtoon.chapters[i].name}`);
     };
 };

@@ -62,6 +62,7 @@ export default function ChapterScreen({ navigation, route }: {
     useEffect(() => {
         (async () => {
             const urls = await fetchChapterImageUrls(chapter);
+            urls.forEach(u => console.log(u.split('/').pop()))
             let localHtml = `<html>`
             localHtml += "<body style='margin: 0 !important;padding: 0 !important;'>";
             for (let url of urls) localHtml += "<div style='width: 100%;'><img style='width: 100%; height: auto;' src='" + url + "'></div>";
@@ -91,8 +92,6 @@ export default function ChapterScreen({ navigation, route }: {
                 injectedJavaScript={injectedJavaScript}
                 onMessage={(nativeEvent) => messageManager(nativeEvent)}
                 allowFileAccess={true}
-                allowFileAccessFromFileURLs={true}
-                allowUniversalAccessFromFileURLs={true}
             />
 
 
