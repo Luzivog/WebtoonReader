@@ -51,7 +51,7 @@ const WebtoonDetailsScreen = ({ navigation, route }: {
 				filteredChapters.sort((a, b) => {
 					const indexA = parseInt(a.url.split('/').slice(-2)[0].split('_')[0], 10);
 					const indexB = parseInt(b.url.split('/').slice(-2)[0].split('_')[0], 10);
-					return indexB - indexA;
+					return indexA - indexB;
 				});
 			
 				setChapters(filteredChapters);

@@ -1,10 +1,10 @@
 import Webtoon from "./Webtoon";
-import { downloadImage, sanitizeFileName, fetchChapterImageUrls } from "./utils";
+import { downloadImage, sanitizeFileName, fetchChapterImageUrls, deleteFolderRecursive } from "./utils";
 import RNFS from 'react-native-fs';
 
 export const handleDownload = async (webtoon: Webtoon, chapterIndexes: number[]) => {
 
-    //await deleteFolderRecursive(RNFS.DocumentDirectoryPath + '/downloads/');
+    await deleteFolderRecursive(RNFS.DocumentDirectoryPath + '/downloads/');
     const webtoonName = webtoon.apiUrl.slice(1, -1).split("/").join("-");
     const dirPath = RNFS.DocumentDirectoryPath + '/downloads/' + webtoonName + "/";
 
@@ -17,7 +17,8 @@ export const handleDownload = async (webtoon: Webtoon, chapterIndexes: number[])
     const chaptersPath = dirPath + "chapters/";
     if (!await RNFS.exists(chaptersPath)) await RNFS.mkdir(chaptersPath);
 
-    chapterIndexes.forEach(async i => {
+    for (let y = 0; y < chapterIndexes.length; y++) {
+        let i = chapterIndexes.length-1-chapterIndexes[y];
         const chapterName = sanitizeFileName(webtoon.chapters[i].name);
         console.log(`Downloading chapter: ${chapterName}`);
         
@@ -41,5 +42,5 @@ export const handleDownload = async (webtoon: Webtoon, chapterIndexes: number[])
         await RNFS.writeFile(chapterPath + "name", webtoon.chapters[i].name);
         
         console.log(`Finished downloading chapter: ${webtoon.chapters[i].name}`);
-    });
+    };
 };
