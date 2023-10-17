@@ -43,17 +43,24 @@ const WebtoonDetailsScreen = ({ navigation, route }: {
 						} as Chapter;
 					}
 				});
-
+			
 				const chaptersResults = await Promise.all(chaptersPromises);
-				const filteredChapters: Chapter[] = chaptersResults.filter((chapter): chapter is Chapter => chapter !== undefined).reverse();
-
+				const filteredChapters: Chapter[] = chaptersResults.filter((chapter): chapter is Chapter => chapter !== undefined);
+			
+				// Sorting chapters based on extracted indexes from filenames
+				filteredChapters.sort((a, b) => {
+					const indexA = parseInt(a.url.split('/').slice(-2)[0].split('_')[0], 10);
+					const indexB = parseInt(b.url.split('/').slice(-2)[0].split('_')[0], 10);
+					return indexB - indexA;
+				});
+			
 				setChapters(filteredChapters);
 			};
 		};
 		setIsLoading(false);
 
 
-	}, [webtoon]);
+	}, [chapters]);
 
 	useEffect(() => {
 		fetchDetails();

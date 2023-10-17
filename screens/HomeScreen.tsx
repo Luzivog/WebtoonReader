@@ -79,8 +79,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#252525',
     },
     sectionHeader: {
-        height: 40,
-        justifyContent: 'center',
+        height: 30,
         paddingLeft: 20,
     },
     sectionHeaderText: {
