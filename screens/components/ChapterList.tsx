@@ -2,6 +2,7 @@ import { FlashList } from "@shopify/flash-list";
 import React from "react";
 import { StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Chapter } from "../../utils/Webtoon";
+import { StatusBarHeight } from "../../utils/config";
 
 interface RenderItemProps {
 	item: Chapter;
@@ -61,7 +62,7 @@ export default function ChapterList({ chapters, header, onPress }: {
 
 const styles = StyleSheet.create({
 	chaptersContainer: {
-		marginTop: StatusBar.currentHeight,
+		marginTop: StatusBarHeight,
 		alignContent: 'center',
 		width: '100%',
 		height: '100%',

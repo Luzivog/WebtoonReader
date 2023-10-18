@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { WebtoonDetailsScreenNavigationProp, WebtoonDetailsScreenRouteProp } from '../navigation/stacks/WebtoonStack';
-import { isObjectEmpty, fetchAllChapters, fetchWebtoonDetails } from '../utils/utils';
+import { isObjectEmpty, fetchAllChapters, fetchWebtoonDetails, fetchDownloadedChapters } from '../utils/utils';
 import WebtoonDetailHeader from './components/WebtoonDetailsHeader';
 import LoadingScreen from './LoadingScreen';
 import Webtoon, { Chapter } from '../utils/Webtoon';
@@ -29,33 +29,7 @@ const WebtoonDetailsScreen = ({ navigation, route }: {
 				webtoon.allChapters = true;
 			};
 			setChapters(webtoon.chapters);
-		} else {
-			const chaptersPath = `${RNFS.DocumentDirectoryPath}/downloads/${webtoon.formattedName}/chapters/`;
-			if (await RNFS.exists(chaptersPath)) {
-
-				const chaptersPromises = (await RNFS.readDir(chaptersPath)).map(async (f) => {
-					const filePath = `${chaptersPath}${f.name}/name`;
-					if (await RNFS.exists(filePath)) {
-						return {
-							name: await RNFS.readFile(filePath),
-							url: `${chaptersPath}${f.name}/`,
-							released: '',
-						} as Chapter;
-					}
-				});
-			
-				const chaptersResults = await Promise.all(chaptersPromises);
-				const filteredChapters: Chapter[] = chaptersResults.filter((chapter): chapter is Chapter => chapter !== undefined);
-			
-				// Sorting chapters based on extracted indexes from filenames
-				filteredChapters.sort((a, b) => {
-					const indexA = parseInt(a.url.split('/').slice(-2)[0].split('_')[0], 10);
-					const indexB = parseInt(b.url.split('/').slice(-2)[0].split('_')[0], 10);
-					return indexA - indexB;
-				});
-				setChapters(filteredChapters);
-			};
-		};
+		} else setChapters(await fetchDownloadedChapters(webtoon));
 		setIsLoading(false);
 		
 	}, [chapters]);

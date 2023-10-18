@@ -1,3 +1,4 @@
+import { DownloadedWebtoonObject } from './../navigation/stacks/DownloadsStack';
 import Webtoon, { Chapter } from "./Webtoon";
 import { parse, HTMLElement } from 'node-html-parser';
 import RNFS from 'react-native-fs';
@@ -168,3 +169,32 @@ export async function downloadImage(url: string, filePath: string): Promise<bool
 		return false;
 	};
 };
+
+
+export async function fetchDownloadedChapters(webtoon: DownloadedWebtoonObject): Promise<Chapter[]> {
+	const chaptersPath = `${RNFS.DocumentDirectoryPath}/downloads/${webtoon.formattedName}/chapters/`;
+	let filteredChapters: Chapter[] = [];
+	if (await RNFS.exists(chaptersPath)) {
+
+		const chaptersPromises = (await RNFS.readDir(chaptersPath)).map(async (f) => {
+			const filePath = `${chaptersPath}${f.name}/name`;
+			if (await RNFS.exists(filePath)) {
+				return {
+					name: await RNFS.readFile(filePath),
+					url: `${chaptersPath}${f.name}/`,
+					released: '',
+				} as Chapter;
+			}
+		});
+	
+		const chaptersResults = await Promise.all(chaptersPromises);
+		filteredChapters = chaptersResults.filter((chapter): chapter is Chapter => chapter !== undefined);
+	
+		filteredChapters.sort((a, b) => {
+			const indexA = parseInt(a.url.split('/').slice(-2)[0].split('_')[0], 10);
+			const indexB = parseInt(b.url.split('/').slice(-2)[0].split('_')[0], 10);
+			return indexA - indexB;
+		});
+	};
+	return filteredChapters;
+}

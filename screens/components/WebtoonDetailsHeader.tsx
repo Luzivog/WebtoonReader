@@ -17,9 +17,6 @@ const handleBookmark = (navigation: WebtoonDetailsScreenNavigationProp) => {
     navigation.navigate("RegisterScreen")
 };
 
-const handleDelete = (formattedName: string): void => {
-}
-
 const WebtoonDetailHeader = (
 
     navigation: WebtoonDetailsScreenNavigationProp,
@@ -31,9 +28,7 @@ const WebtoonDetailHeader = (
     chapters: Chapter[]
 
 ) => {
-
-    console.log("Webtoon detail header:", chapters.length);
-
+    
     const download = 'imageUrl' in webtoon;
 
     return (
