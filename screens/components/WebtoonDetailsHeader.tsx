@@ -1,13 +1,12 @@
 import { View, TouchableOpacity, Text, Modal, StyleSheet } from "react-native"
 import Ionicons from "react-native-vector-icons/Ionicons"
-import Webtoon from "../../utils/Webtoon"
+import Webtoon, { Chapter } from "../../utils/Webtoon"
 import DetailItem from "./DetailItem"
 import InfoPopup from "./InfoPopup"
 import AuthOverlay from './AuthOverlay';
 import { WebtoonDetailsScreenNavigationProp } from '../../navigation/stacks/WebtoonStack';
 import { vw } from '../../utils/config';
 import { DownloadedWebtoonObject } from "../../navigation/stacks/DownloadsStack";
-import { handleDownload } from "../../utils/downloadDelete";
 import FastImage from "react-native-fast-image";
 
 const handleReadChapter = () => {
@@ -29,8 +28,11 @@ const WebtoonDetailHeader = (
     isAuthOverlayVisible: boolean,
     setPopupVisible: (visible: boolean) => void,
     toggleAuthOverlay: (visible: boolean) => void,
+    chapters: Chapter[]
 
 ) => {
+
+    console.log("Webtoon detail header:", chapters.length);
 
     const download = 'imageUrl' in webtoon;
 
@@ -49,7 +51,7 @@ const WebtoonDetailHeader = (
                         <Ionicons name='information-circle-outline' style={styles.icon} size={30} />
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={() => navigation.navigate('DownloadSelectionScreen', {webtoon})}>
+                    <TouchableOpacity onPress={() => navigation.navigate('DownloadSelectionScreen', {webtoon, chapters})}>
                         <Ionicons name={download ? 'download-outline' : 'trash-outline' } style={styles.icon} size={30} />
                     </TouchableOpacity>
 

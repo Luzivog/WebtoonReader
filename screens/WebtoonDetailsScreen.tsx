@@ -62,14 +62,14 @@ const WebtoonDetailsScreen = ({ navigation, route }: {
 
 	useEffect(() => {
 		fetchDetails();
-	}, [fetchDetails]);
+	}, [chapters]);
 
 	if (isLoading) return <LoadingScreen />;
 
 	return (
 		<ChapterList
 			chapters={chapters}
-			header={WebtoonDetailHeader(navigation, webtoon, isPopupVisible, isAuthOverlayVisible, setPopupVisible, toggleAuthOverlay)}
+			header={WebtoonDetailHeader(navigation, webtoon, isPopupVisible, isAuthOverlayVisible, setPopupVisible, toggleAuthOverlay, chapters)}
 			onPress={(chapter: Chapter) => navigation.navigate('ChapterScreen', { chapters: chapters, chapter: chapter })}
 		/>
 	);

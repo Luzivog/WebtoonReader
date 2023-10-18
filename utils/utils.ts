@@ -4,7 +4,7 @@ import RNFS from 'react-native-fs';
 import { defaultDetails, defaultImage, defaultTitle } from "./config";
 import RNFetchBlob from "rn-fetch-blob";
 
-function delay(ms: number): Promise<void> {
+export function delay(ms: number): Promise<void> {
 	return new Promise<void>(resolve => {
 		setTimeout(resolve, ms);
 	});

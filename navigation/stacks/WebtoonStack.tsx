@@ -14,7 +14,7 @@ type RootStackParamList = {
     ChapterScreen: { chapters: Chapter[], chapter: Chapter };
     RegisterScreen: undefined;
     LoginScreen: undefined;
-    DownloadSelectionScreen: { webtoon: Webtoon | DownloadedWebtoonObject };
+    DownloadSelectionScreen: { webtoon: Webtoon | DownloadedWebtoonObject, chapters: Chapter[] };
 };
 
 export type WebtoonDetailsScreenNavigationProp = StackNavigationProp<RootStackParamList, 'WebtoonDetailsScreen'>;
