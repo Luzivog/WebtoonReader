@@ -50,16 +50,15 @@ const WebtoonDetailsScreen = ({ navigation, route }: {
 				// Sorting chapters based on extracted indexes from filenames
 				filteredChapters.sort((a, b) => {
 					const indexA = parseInt(a.url.split('/').slice(-2)[0].split('_')[0], 10);
+					console.log(a.url.split('/').slice(-2));
 					const indexB = parseInt(b.url.split('/').slice(-2)[0].split('_')[0], 10);
 					return indexA - indexB;
 				});
-			
 				setChapters(filteredChapters);
 			};
 		};
 		setIsLoading(false);
-
-
+		
 	}, [chapters]);
 
 	useEffect(() => {

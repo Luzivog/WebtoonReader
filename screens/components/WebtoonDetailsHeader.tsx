@@ -1,15 +1,14 @@
-import { View, TouchableOpacity, Image, Text, Modal, StyleSheet } from "react-native"
-import RNFS from 'react-native-fs';
+import { View, TouchableOpacity, Text, Modal, StyleSheet } from "react-native"
 import Ionicons from "react-native-vector-icons/Ionicons"
 import Webtoon from "../../utils/Webtoon"
 import DetailItem from "./DetailItem"
 import InfoPopup from "./InfoPopup"
 import AuthOverlay from './AuthOverlay';
 import { WebtoonDetailsScreenNavigationProp } from '../../navigation/stacks/WebtoonStack';
-import { deleteFolderRecursive, downloadImage, fetchChapterImageUrls, sanitizeFileName } from '../../utils/utils';
 import { vw } from '../../utils/config';
 import { DownloadedWebtoonObject } from "../../navigation/stacks/DownloadsStack";
 import { handleDownload } from "../../utils/downloadDelete";
+import FastImage from "react-native-fast-image";
 
 const handleReadChapter = () => {
     // Add logic to handle reading chapter 1
@@ -60,7 +59,7 @@ const WebtoonDetailHeader = (
 
             {download && (
                 <View style={styles.content}>
-                    <Image source={{ uri: webtoon.imageUrl }} style={styles.image} resizeMode="cover" />
+                    <FastImage source={{ uri: webtoon.imageUrl }} style={styles.image} resizeMode="cover" />
 
                     <View style={styles.detailsContainer}>
                         {webtoon.details && (
