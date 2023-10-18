@@ -49,7 +49,7 @@ const WebtoonDetailHeader = (
                         <Ionicons name='information-circle-outline' style={styles.icon} size={30} />
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={download ? () => handleDownload(webtoon, [...Array(webtoon.chapters.length).keys()]) : () => handleDelete(webtoon.name)}>
+                    <TouchableOpacity onPress={() => navigation.navigate('DownloadSelectionScreen', {webtoon})}>
                         <Ionicons name={download ? 'download-outline' : 'trash-outline' } style={styles.icon} size={30} />
                     </TouchableOpacity>
 

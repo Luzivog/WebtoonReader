@@ -7,12 +7,14 @@ import ChapterScreen from '../../screens/ChapterScreen';
 import RegisterScreen from '../../screens/RegisterScreen';
 import LoginScreen from '../../screens/LoginScreen';
 import { DownloadedWebtoonObject } from './DownloadsStack';
+import DownloadSelectionScreen from '../../screens/DownloadSelectionScreen';
 
 type RootStackParamList = {
     WebtoonDetailsScreen: { webtoon: Webtoon | DownloadedWebtoonObject };
-    ChapterScreen: {chapters: Chapter[], chapter: Chapter};
+    ChapterScreen: { chapters: Chapter[], chapter: Chapter };
     RegisterScreen: undefined;
     LoginScreen: undefined;
+    DownloadSelectionScreen: { webtoon: Webtoon | DownloadedWebtoonObject };
 };
 
 export type WebtoonDetailsScreenNavigationProp = StackNavigationProp<RootStackParamList, 'WebtoonDetailsScreen'>;
@@ -27,37 +29,59 @@ export type RegisterScreenRouteProp = RouteProp<RootStackParamList, 'RegisterScr
 export type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'LoginScreen'>;
 export type LoginScreenRouteProp = RouteProp<RootStackParamList, 'LoginScreen'>;
 
+export type DownloadSelectionScreenNavigationProp = StackNavigationProp<RootStackParamList, 'DownloadSelectionScreen'>;
+export type DownloadSelectionScreenRouteProp = RouteProp<RootStackParamList, 'DownloadSelectionScreen'>;
 
 const Stack = createStackNavigator<RootStackParamList>();
 
-export default function WebtoonStack({navigation}: {navigation: any}): JSX.Element {
+type RouteState = {
+    index: number;
+    routes: { name: string }[];
+};
+
+const screenWithVisibleTabBar = [
+    'WebtoonDetailsScreen',
+    'DownloadSelectionScreen'
+];
+
+export default function WebtoonStack({ navigation }: { navigation: any }): JSX.Element {
     return (
         <Stack.Navigator 
-        initialRouteName='WebtoonDetailsScreen'
-        screenListeners={{
-            state: (e) => {
-              if (e && e.data && (e.data as {state:{index: number}}).state.index >= 1) {
-                navigation.getParent().setOptions({
-                    tabBarStyle: { 
-                        backgroundColor: 'black', 
-                        height: 0 
+            initialRouteName='WebtoonDetailsScreen'
+            screenListeners={{
+                state: (e) => {
+
+                    const currentState = e.data as { state: RouteState };
+                    const currentRoute = currentState?.state?.routes[currentState.state.index]?.name;
+
+                    if (currentRoute) {
+                        if (screenWithVisibleTabBar.includes(currentRoute)) {
+                            navigation.getParent().setOptions({
+                                tabBarStyle: { 
+                                    backgroundColor: 'black', 
+                                    height: 60 
+                                }
+                            });
+                        } else {
+                            navigation.getParent().setOptions({
+                                tabBarStyle: { 
+                                    backgroundColor: 'black', 
+                                    height: 0 
+                                }
+                            });
+                        }
                     }
-                })
-              }
-              else {
-                navigation.getParent().setOptions({
-                    tabBarStyle: { 
-                        backgroundColor: 'black', 
-                        height: 60
-                    }
-                })
-              };
-            },
-          }}
+                },
+            }}
         >
             <Stack.Screen
                 name="WebtoonDetailsScreen"
                 component={WebtoonDetailsScreen}
+                options={{ headerShown: false }}
+            />
+            <Stack.Screen
+                name="DownloadSelectionScreen"
+                component={DownloadSelectionScreen}
                 options={{ headerShown: false }}
             />
             <Stack.Screen
