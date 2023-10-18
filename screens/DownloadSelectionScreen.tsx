@@ -33,17 +33,15 @@ export default function DonwloadSelectionScreen({ navigation, route }: {
     return (
         <ChapterList
             header={
-                <View style={styles.container}>
-                    <View style={styles.header}>
-                        <TouchableOpacity onPress={() => navigation.goBack()}>
-                            <Ionicons name='arrow-back' style={styles.arrowBack} size={40} />
-                        </TouchableOpacity>
-                        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.titleContainer}>
-                            <Text style={styles.title} numberOfLines={1}>
-                                {webtoon.name}
-                            </Text>
-                        </ScrollView>
-                    </View>
+                <View style={styles.header}>
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                        <Ionicons name='arrow-back' style={styles.arrowBack} size={40} />
+                    </TouchableOpacity>
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.titleContainer}>
+                        <Text style={styles.title} numberOfLines={1}>
+                            {webtoon.name}
+                        </Text>
+                    </ScrollView>
                 </View>
             }
             chapters={currentChapters}
@@ -53,10 +51,8 @@ export default function DonwloadSelectionScreen({ navigation, route }: {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        padding: 10,
-    },
     header: {
+        padding: 2*vw,
         flexDirection: 'row',
         alignItems: 'center',
     },

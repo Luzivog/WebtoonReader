@@ -103,7 +103,7 @@ const WebtoonDetailHeader = (
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 10,
+        padding: 2*vw,
         marginBottom: 5,
     },
     header: {
