@@ -2,25 +2,33 @@ import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
 import Webtoon, { Chapter } from "../utils/Webtoon";
 import { DownloadSelectionScreenNavigationProp, DownloadSelectionScreenRouteProp } from "../navigation/stacks/WebtoonStack";
 import { DownloadedWebtoonObject } from "../navigation/stacks/DownloadsStack";
-import ChapterList, { RenderItemProps, extraDataType } from "./components/ChapterList";
+import ChapterList, { extraDataType } from "./components/ChapterList";
 import { useEffect, useState } from "react";
 import { isObjectEmpty, fetchWebtoonDetails, fetchAllChapters, delay, fetchDownloadedChapters } from "../utils/utils";
-import { vh, vw } from "../utils/config";
+import { vw } from "../utils/config";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { ScrollView } from "react-native-gesture-handler";
 import React from "react";
 import CircleLoader from "./components/CircleLoader";
+import { useSelector, useDispatch } from 'react-redux';
+import { setDownloadingChapters } from '../utils/actions'; // Make sure this path is correct
 
-
-const RenderItem = ({ webtoonName, item, extraData, setDownloadingChapters, setDownloadedChapters }: {
+const RenderItem = ({ webtoonName, item, extraData }: {
     webtoonName: string,
     item: Chapter,
     extraData: extraDataType,
-    setDownloadingChapters: Function,
-    setDownloadedChapters: Function
 }): JSX.Element => {
 
+    const dispatch = useDispatch();
     const id = webtoonName+item.name;
+
+    const handlePress = () => {
+        const newDownloadingChapters = {
+            ...extraData.downloadingChapters,
+            [id]: 0,
+        };
+        dispatch(setDownloadingChapters(newDownloadingChapters));
+    };
 
     return (
         <View style={styles.line}>
@@ -45,20 +53,18 @@ const RenderItem = ({ webtoonName, item, extraData, setDownloadingChapters, setD
                 </View>
             </View>
 
-            <TouchableOpacity
-                style={styles.iconContainer}
-                onPress={() => {
-                    const newDownloadingChapters = {
-                        ...extraData.downloadingChapters,
-                        [id]: 0,
-                    };
-                    setDownloadingChapters(newDownloadingChapters);
-                }}
-            >
-                {id in extraData.downloadingChapters ?
+            {id in extraData.downloadingChapters ?
+                <View style={styles.iconContainer}>
                     <CircleLoader size={28} percentage={extraData.downloadingChapters[id]} />
-                    : <Ionicons style={styles.downloadDeleteIcon} name="download-outline" size={10 * vw} />}
-            </TouchableOpacity>
+                </View>
+                :    
+                <TouchableOpacity
+                    style={styles.iconContainer}
+                    onPress={handlePress}
+                >
+                    <Ionicons style={styles.downloadDeleteIcon} name="download-outline" size={10 * vw} />
+                </TouchableOpacity>
+            }
         </View>
     );
 };
@@ -70,10 +76,12 @@ export default function DonwloadSelectionScreen({ navigation, route }: {
 
     const { webtoon, chapters }: { webtoon: Webtoon | DownloadedWebtoonObject, chapters: Chapter[] } = route.params;
     const [currentChapters, setChapters] = useState<Chapter[]>(chapters);
-    const [downloadingChapters, setDownloadingChapters] = useState<{ [name: string]: number }>({});
     const [downloadedChapters, setDownloadedChapters] = useState<string[]>([]);
 
-    let extraData = { downloadingChapters: downloadingChapters, downloadedChapters: downloadedChapters }
+    const downloadingChapters = useSelector((state: any) => state.downloadingChapters);
+    console.log(downloadingChapters);
+    const extraData = { downloadingChapters, downloadedChapters: downloadedChapters };
+
 
     useEffect(() => {
         (async () => {
@@ -86,7 +94,9 @@ export default function DonwloadSelectionScreen({ navigation, route }: {
                 setChapters(webtoon.chapters);
             } else if (chapters.length === 0) setChapters(await fetchDownloadedChapters(webtoon));
         })();
-    }, [currentChapters, downloadingChapters]);
+    }, [currentChapters]);
+
+    useEffect(() => {}, [downloadingChapters]);
 
     return (
         <ChapterList
@@ -103,13 +113,7 @@ export default function DonwloadSelectionScreen({ navigation, route }: {
                 </View>
             }
             chapters={currentChapters}
-            renderItem={({ item }) => <RenderItem
-                webtoonName={webtoon.name}
-                item={item}
-                extraData={extraData}
-                setDownloadingChapters={setDownloadingChapters}
-                setDownloadedChapters={setDownloadedChapters}    
-            />}
+            renderItem={({ item }) => <RenderItem webtoonName={webtoon.name} item={item} extraData={extraData} />}
             extraData={extraData}
             onPress={() => { }}
         />
