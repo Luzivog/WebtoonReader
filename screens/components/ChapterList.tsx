@@ -1,15 +1,18 @@
 import { FlashList } from "@shopify/flash-list";
 import React from "react";
-import { StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Chapter } from "../../utils/Webtoon";
 import { StatusBarHeight } from "../../utils/config";
 
-interface RenderItemProps {
+export type extraDataType = {downloadingChapters: {[name: string]: number}, downloadedChapters: string[]};
+
+export interface RenderItemProps {
 	item: Chapter;
 	onPress: (chapter: Chapter) => void;
-}
+	extraData?: extraDataType
+};
 
-const RenderItem: React.FC<RenderItemProps> = React.memo(({ item, onPress }) => {
+const RenderItem = ({ item, onPress }: RenderItemProps): JSX.Element => {
     return (
         <TouchableOpacity
             key={item.name}
@@ -33,26 +36,31 @@ const RenderItem: React.FC<RenderItemProps> = React.memo(({ item, onPress }) => 
             </View>
         </TouchableOpacity>
     );
-});
+};
 
-export default function ChapterList({ chapters, header, onPress }: {
+export default function ChapterList({ chapters, header, onPress, renderItem=RenderItem, extraData }: {
 	chapters: Chapter[],
 	header: React.JSX.Element,
 	onPress: (chapter: Chapter) => void;
+	renderItem?: (props: RenderItemProps) => JSX.Element;
+	extraData?: extraDataType
 }) {
 	return (
 		<View style={styles.chaptersContainer}>
 			<FlashList
 				data={chapters}
-				extraData={chapters}
+				extraData={extraData}
 				removeClippedSubviews={true}
 				estimatedItemSize={50}
 				ListHeaderComponent={header}
 				renderItem={({ item: chapter }) => (
-					<RenderItem
-						item={chapter}
-						onPress={onPress}
-					/>
+					<>
+						{renderItem({
+							item: chapter,
+							onPress: onPress,
+							extraData: extraData
+						})}
+					</>
 				)}
 			/>
 		</View>

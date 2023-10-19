@@ -12,7 +12,7 @@ import RNFS from 'react-native-fs';
  * 
  * @returns {Promise<void>} Returns a promise which resolves when all specified chapters and their details are downloaded.
  */
-export const handleDownload = async (webtoon: Webtoon, chapterIndexes: number[]) => {
+export const handleDownload = async (webtoon: Webtoon, chapterIndexes: number[], setDownloadingChapters: Function) => {
 
     await deleteFolderRecursive(RNFS.DocumentDirectoryPath + '/downloads/');
     const webtoonName = webtoon.apiUrl.slice(1, -1).split("/").join("-");
