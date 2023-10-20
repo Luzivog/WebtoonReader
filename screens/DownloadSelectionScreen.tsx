@@ -4,13 +4,14 @@ import { DownloadSelectionScreenNavigationProp, DownloadSelectionScreenRouteProp
 import { DownloadedWebtoonObject } from "../navigation/stacks/DownloadsStack";
 import ChapterList from "./components/ChapterList";
 import { useCallback, useEffect, useState } from "react";
-import { isObjectEmpty, fetchWebtoonDetails, fetchAllChapters, fetchDownloadedChapters } from "../utils/utils";
+import { isObjectEmpty, fetchWebtoonDetails, fetchAllChapters, fetchDownloadedChapters, sanitizeFileName } from "../utils/utils";
 import { vw } from "../utils/config";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { ScrollView } from "react-native-gesture-handler";
 import React from "react";
 import CircleLoader from "./components/CircleLoader";
 import { processQueue } from "../utils/downloadDelete";
+import RNFS from "react-native-fs";
 
 const RenderItem = ({ webtoon, item }: {
     webtoon: Webtoon | DownloadedWebtoonObject,
@@ -23,7 +24,7 @@ const RenderItem = ({ webtoon, item }: {
         "imageUrl" in webtoon && (global.downloadingChapters.find(dlEl => dlEl.id === id) != undefined)
     );
 
-    const [downloaded, setIsDownloaded] = useState(false);
+    const [isDownloaded, setIsDownloaded] = useState(!("imageUrl" in webtoon));
 
     const [percentage, setPercentage] = useState(() => {
         if (!("imageUrl" in webtoon)) return 0;
@@ -34,13 +35,24 @@ const RenderItem = ({ webtoon, item }: {
 
     if ("imageUrl" in webtoon){
         let element = global.downloadingChapters.find(dlEl => dlEl.id === id);
-        if (element) element.setPercentage = setPercentage;
+        if (element) {
+            element.setPercentage = setPercentage;
+            element.setIsDownloaded = setIsDownloaded;
+        };
     };
 
     useEffect(() => {
+        if ("imageUrl" in webtoon) {
+            const index = webtoon.chapters.findIndex(c => c.name == item.name);
+            const chapNumber = webtoon.chapters.length - index - 1;
+            const webtoonName = sanitizeFileName(webtoon.apiUrl.slice(1, -1).split("/").join("-"));
+            const chaptersPath = `${RNFS.DocumentDirectoryPath}/downloads/${sanitizeFileName(webtoonName)}/chapters/${chapNumber}_${sanitizeFileName(item.name)}/name`;
+            (async () => {
+                setIsDownloaded(await RNFS.exists(chaptersPath));
+            })();
+        }
+    }, [isDownloaded]);
 
-    }, [downloaded])
-    
 
     const handlePress = useCallback(() => {
         if ("imageUrl" in webtoon) {
@@ -50,6 +62,7 @@ const RenderItem = ({ webtoon, item }: {
                 chapterIndex: index,
                 id: id,
                 setPercentage: setPercentage,
+                setIsDownloaded: setIsDownloaded,
                 percentage: 0
             });
             setIsDownloading(true);
@@ -77,17 +90,27 @@ const RenderItem = ({ webtoon, item }: {
                 </View>
             </View>
 
-                {isDownloading ?
-                    <View style={styles.iconContainer}>
-                        <CircleLoader size={28} percentage={percentage} />
-                    </View>
-                    :
-                    <TouchableOpacity
-                        style={styles.iconContainer}
-                        onPress={handlePress}
-                    >
-                        <Ionicons style={styles.downloadDeleteIcon} name="download-outline" size={10 * vw} />
-                    </TouchableOpacity>
+            {
+                    isDownloaded ? (
+                        <TouchableOpacity
+                                style={styles.iconContainer}
+                            >
+                            <Ionicons style={styles.downloadDeleteIcon} name="trash-outline" size={10 * vw} />
+                        </TouchableOpacity>
+                    ) : (
+                        isDownloading ? (
+                            <View style={styles.iconContainer}>
+                                <CircleLoader size={28} percentage={percentage} />
+                            </View>    
+                        ) : (
+                            <TouchableOpacity
+                                style={styles.iconContainer}
+                                onPress={handlePress}
+                            >
+                                <Ionicons style={styles.downloadDeleteIcon} name="download-outline" size={10 * vw} />
+                            </TouchableOpacity>
+                        )
+                    )
                 }
             </View>
     );

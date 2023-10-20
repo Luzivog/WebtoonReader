@@ -78,5 +78,7 @@ export const handleDownload = async (webtoon: Webtoon, chapterIndex: number, set
 
     await RNFS.writeFile(chapterPath + "name", webtoon.chapters[chapterIndex].name);
 
+    global.downloadingChapters[0].setIsDownloaded(true);
+
     console.log(`Finished downloading chapter: ${webtoon.chapters[chapterIndex].name}`);
 };
