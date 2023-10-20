@@ -6,6 +6,7 @@ import { StatusBarHeight, vh, vw } from '../utils/config';
 import { useIsFocused } from '@react-navigation/native';
 import LoadingScreen from './LoadingScreen';
 import { DownloadsScreenNavigationProp } from '../navigation/stacks/DownloadsStack';
+import { sanitizeFileName } from '../utils/utils';
 
 const numColumns = 2;
 
@@ -31,7 +32,7 @@ function DownloadsScreen({ navigation }: {
                 try {
                     const webtoonFiles = await RNFS.readDir(downloadPath);
                     const webtoonPromises = webtoonFiles.map(async (webtoonFile) => {
-                        const webtoonPath = `${downloadPath}${webtoonFile.name}`;
+                        const webtoonPath = `${downloadPath}${sanitizeFileName(webtoonFile.name)}`;
                         const webtoonPathFiles = (await RNFS.readDir(webtoonPath)).map(f => f.name);
                         if (webtoonPathFiles.includes('cover')
                             && webtoonPathFiles.includes('name')

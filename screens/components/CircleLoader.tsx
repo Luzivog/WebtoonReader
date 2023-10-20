@@ -9,7 +9,7 @@ const CircleLoader = ({ size, percentage }: {
 
   const radius = size / 2;
   
-  const angle = 360*(percentage/100);
+  const angle = 360*(percentage);
   const a = angle * (Math.PI / 180);
   const x = radius + radius * Math.sin(a);
   const y = radius - radius * Math.cos(a);

@@ -3,13 +3,11 @@ import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Chapter } from "../../utils/Webtoon";
 import { StatusBarHeight } from "../../utils/config";
-
-export type extraDataType = {downloadingChapters: {[name: string]: number}, downloadedChapters: string[]};
+import { FlatList, ScrollView } from "react-native-gesture-handler";
 
 export interface RenderItemProps {
 	item: Chapter;
 	onPress: (chapter: Chapter) => void;
-	extraData?: extraDataType
 };
 
 const RenderItem = ({ item, onPress }: RenderItemProps): JSX.Element => {
@@ -38,31 +36,26 @@ const RenderItem = ({ item, onPress }: RenderItemProps): JSX.Element => {
     );
 };
 
-export default function ChapterList({ chapters, header, onPress, renderItem=RenderItem, extraData }: {
+export default function ChapterList({ chapters, header, onPress, renderItem=RenderItem }: {
 	chapters: Chapter[],
 	header: React.JSX.Element,
 	onPress: (chapter: Chapter) => void;
 	renderItem?: (props: RenderItemProps) => JSX.Element;
-	extraData?: extraDataType
 }) {
 	return (
 		<View style={styles.chaptersContainer}>
-			<FlashList
-				data={chapters}
-				extraData={extraData}
-				removeClippedSubviews={true}
-				estimatedItemSize={50}
-				ListHeaderComponent={header}
-				renderItem={({ item: chapter }) => (
-					<>
-						{renderItem({
-							item: chapter,
-							onPress: onPress,
-							extraData: extraData
-						})}
-					</>
-				)}
-			/>
+		<FlatList		
+			data={chapters}
+			ListHeaderComponent={header}
+			renderItem={({ item: chapter, index }) => (
+				<>
+					{renderItem({
+						item: chapter,
+						onPress: onPress,
+					})}
+				</>
+			)}
+		/>
 		</View>
 	)
 }

@@ -2,40 +2,64 @@ import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
 import Webtoon, { Chapter } from "../utils/Webtoon";
 import { DownloadSelectionScreenNavigationProp, DownloadSelectionScreenRouteProp } from "../navigation/stacks/WebtoonStack";
 import { DownloadedWebtoonObject } from "../navigation/stacks/DownloadsStack";
-import ChapterList, { extraDataType } from "./components/ChapterList";
-import { useEffect, useState } from "react";
-import { isObjectEmpty, fetchWebtoonDetails, fetchAllChapters, delay, fetchDownloadedChapters } from "../utils/utils";
+import ChapterList from "./components/ChapterList";
+import { useCallback, useEffect, useState } from "react";
+import { isObjectEmpty, fetchWebtoonDetails, fetchAllChapters, fetchDownloadedChapters } from "../utils/utils";
 import { vw } from "../utils/config";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { ScrollView } from "react-native-gesture-handler";
 import React from "react";
 import CircleLoader from "./components/CircleLoader";
-import { useSelector, useDispatch } from 'react-redux';
-import { setDownloadingChapters } from '../utils/actions'; // Make sure this path is correct
+import { processQueue } from "../utils/downloadDelete";
 
-const RenderItem = ({ webtoonName, item, extraData }: {
-    webtoonName: string,
+const RenderItem = ({ webtoon, item }: {
+    webtoon: Webtoon | DownloadedWebtoonObject,
     item: Chapter,
-    extraData: extraDataType,
 }): JSX.Element => {
 
-    const dispatch = useDispatch();
-    const id = webtoonName+item.name;
+    const id = webtoon.name + item.name;
 
-    const handlePress = () => {
-        const newDownloadingChapters = {
-            ...extraData.downloadingChapters,
-            [id]: 0,
-        };
-        dispatch(setDownloadingChapters(newDownloadingChapters));
+    const [isDownloading, setIsDownloading] = useState<boolean>(
+        "imageUrl" in webtoon && (global.downloadingChapters.find(dlEl => dlEl.id === id) != undefined)
+    );
+
+    const [downloaded, setIsDownloaded] = useState(false);
+
+    const [percentage, setPercentage] = useState(() => {
+        if (!("imageUrl" in webtoon)) return 0;
+        let dlEl = global.downloadingChapters.find(dlEl => dlEl.id === id);
+        if (dlEl === undefined) return 0;
+        return dlEl.percentage;
+    });
+
+    if ("imageUrl" in webtoon){
+        let element = global.downloadingChapters.find(dlEl => dlEl.id === id);
+        if (element) element.setPercentage = setPercentage;
     };
+
+    useEffect(() => {
+
+    }, [downloaded])
+    
+
+    const handlePress = useCallback(() => {
+        if ("imageUrl" in webtoon) {
+            const index = webtoon.chapters.findIndex(c => c.name == item.name);
+            global.downloadingChapters.push({
+                webtoon: webtoon,
+                chapterIndex: index,
+                id: id,
+                setPercentage: setPercentage,
+                percentage: 0
+            });
+            setIsDownloading(true);
+            processQueue();
+        };
+    }, [webtoon, item]);
 
     return (
         <View style={styles.line}>
-            <View
-                key={item.name}
-                style={styles.chapterItem}
-            >
+            <View key={item.name} style={styles.chapterItem}>
                 <View style={styles.chapterItemContent}>
                     <Text
                         style={[
@@ -53,19 +77,19 @@ const RenderItem = ({ webtoonName, item, extraData }: {
                 </View>
             </View>
 
-            {id in extraData.downloadingChapters ?
-                <View style={styles.iconContainer}>
-                    <CircleLoader size={28} percentage={extraData.downloadingChapters[id]} />
-                </View>
-                :    
-                <TouchableOpacity
-                    style={styles.iconContainer}
-                    onPress={handlePress}
-                >
-                    <Ionicons style={styles.downloadDeleteIcon} name="download-outline" size={10 * vw} />
-                </TouchableOpacity>
-            }
-        </View>
+                {isDownloading ?
+                    <View style={styles.iconContainer}>
+                        <CircleLoader size={28} percentage={percentage} />
+                    </View>
+                    :
+                    <TouchableOpacity
+                        style={styles.iconContainer}
+                        onPress={handlePress}
+                    >
+                        <Ionicons style={styles.downloadDeleteIcon} name="download-outline" size={10 * vw} />
+                    </TouchableOpacity>
+                }
+            </View>
     );
 };
 
@@ -77,11 +101,6 @@ export default function DonwloadSelectionScreen({ navigation, route }: {
     const { webtoon, chapters }: { webtoon: Webtoon | DownloadedWebtoonObject, chapters: Chapter[] } = route.params;
     const [currentChapters, setChapters] = useState<Chapter[]>(chapters);
     const [downloadedChapters, setDownloadedChapters] = useState<string[]>([]);
-
-    const downloadingChapters = useSelector((state: any) => state.downloadingChapters);
-    console.log(downloadingChapters);
-    const extraData = { downloadingChapters, downloadedChapters: downloadedChapters };
-
 
     useEffect(() => {
         (async () => {
@@ -95,8 +114,6 @@ export default function DonwloadSelectionScreen({ navigation, route }: {
             } else if (chapters.length === 0) setChapters(await fetchDownloadedChapters(webtoon));
         })();
     }, [currentChapters]);
-
-    useEffect(() => {}, [downloadingChapters]);
 
     return (
         <ChapterList
@@ -113,8 +130,7 @@ export default function DonwloadSelectionScreen({ navigation, route }: {
                 </View>
             }
             chapters={currentChapters}
-            renderItem={({ item }) => <RenderItem webtoonName={webtoon.name} item={item} extraData={extraData} />}
-            extraData={extraData}
+            renderItem={({ item }) => <RenderItem webtoon={webtoon} item={item} />}
             onPress={() => { }}
         />
     );

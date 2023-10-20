@@ -177,7 +177,7 @@ export async function fetchDownloadedChapters(webtoon: DownloadedWebtoonObject):
 	if (await RNFS.exists(chaptersPath)) {
 
 		const chaptersPromises = (await RNFS.readDir(chaptersPath)).map(async (f) => {
-			const filePath = `${chaptersPath}${f.name}/name`;
+			const filePath = `${chaptersPath}${sanitizeFileName(f.name)}/name`;
 			if (await RNFS.exists(filePath)) {
 				return {
 					name: await RNFS.readFile(filePath),
@@ -193,7 +193,7 @@ export async function fetchDownloadedChapters(webtoon: DownloadedWebtoonObject):
 		filteredChapters.sort((a, b) => {
 			const indexA = parseInt(a.url.split('/').slice(-2)[0].split('_')[0], 10);
 			const indexB = parseInt(b.url.split('/').slice(-2)[0].split('_')[0], 10);
-			return indexA - indexB;
+			return indexB - indexA;
 		});
 	};
 	return filteredChapters;
