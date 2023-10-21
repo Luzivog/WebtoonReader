@@ -8,6 +8,7 @@ import { FlatList, ScrollView } from "react-native-gesture-handler";
 export interface RenderItemProps {
 	item: Chapter;
 	onPress: (chapter: Chapter) => void;
+	index?: number;
 };
 
 const RenderItem = ({ item, onPress }: RenderItemProps): JSX.Element => {
@@ -51,6 +52,7 @@ export default function ChapterList({ chapters, header, onPress, renderItem=Rend
 				<>
 					{renderItem({
 						item: chapter,
+						index: index,
 						onPress: onPress,
 					})}
 				</>

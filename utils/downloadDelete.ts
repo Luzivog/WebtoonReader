@@ -1,22 +1,21 @@
-import Webtoon from "./Webtoon";
 import { downloadImage, sanitizeFileName, fetchChapterImageUrls, deleteFolderRecursive } from "./utils";
 import RNFS from 'react-native-fs';
-import { setDownloadingChapters } from "./actions";
 
 let isProcessing = false; // Track if the queue is currently being processed
 
 export async function processQueue() {
-    if (isProcessing || global.downloadingChapters.length === 0) return; // Avoid parallel processing or processing an empty queue
+    if (isProcessing || global.downloadingQueue.length === 0) return; // Avoid parallel processing or processing an empty queue
 
     isProcessing = true; // Set processing flag
 
     try {
-        while (global.downloadingChapters.length > 0) {
-            console.log("Download queue length: ", global.downloadingChapters.length)
+        while (global.downloadingQueue.length > 0) {
+            console.log("Download queue length: ", global.downloadingQueue.length)
 
-            const { webtoon, chapterIndex, setPercentage } = global.downloadingChapters[0];
-            await handleDownload(webtoon, chapterIndex, setPercentage); // Process the dequeued item
-            global.downloadingChapters.shift();
+            const id = global.downloadingQueue[0];
+            await handleDownload(id); // Process the dequeued item
+            global.downloadingQueue.shift();
+            delete global.downloadingChapters[id];
         }
     } finally {
         isProcessing = false; // Reset processing flag when queue is empty or an error occurred
@@ -32,32 +31,32 @@ export async function processQueue() {
  * 
  * @returns {Promise<void>} Returns a promise which resolves when the specified chapters and it's details is downloaded.
  */
-export const handleDownload = async (webtoon: Webtoon, chapterIndex: number, setPercentage: Function) => {
+export const handleDownload = async (id: string) => {
+
+    let dl = global.downloadingChapters[id];
 
     //await deleteFolderRecursive(RNFS.DocumentDirectoryPath + '/downloads/');
-    const webtoonName = sanitizeFileName(webtoon.apiUrl.slice(1, -1).split("/").join("-"));
+    const webtoonName = sanitizeFileName(dl.webtoonApiUrl.slice(1, -1).split("/").join("-"));
     const dirPath = RNFS.DocumentDirectoryPath + '/downloads/' + webtoonName + "/";
 
     if (!await RNFS.exists(dirPath)) await RNFS.mkdir(dirPath);
-    if (!(await RNFS.exists(dirPath + "cover"))) await downloadImage(webtoon.imageUrl, dirPath + "cover");
-    if (!(await RNFS.exists(dirPath + "name"))) await RNFS.writeFile(dirPath + "name", webtoon.name);
-    if (!(await RNFS.exists(dirPath + "summary"))) await RNFS.writeFile(dirPath + "summary", webtoon.details.summary);
+    if (!(await RNFS.exists(dirPath + "cover"))) await downloadImage(dl.webtoonImageUrl, dirPath + "cover");
+    if (!(await RNFS.exists(dirPath + "name"))) await RNFS.writeFile(dirPath + "name", dl.webtoonName);
+    if (!(await RNFS.exists(dirPath + "summary"))) await RNFS.writeFile(dirPath + "summary", dl.webtoonSummary);
 
     const chaptersPath = dirPath + "chapters/";
     if (!await RNFS.exists(chaptersPath)) await RNFS.mkdir(chaptersPath);
 
-    const chapterName = sanitizeFileName(webtoon.chapters[chapterIndex].name);
+    const chapterName = sanitizeFileName(dl.chapter.name);
     console.log(`Downloading chapter: ${chapterName}`);
 
-    const chapNumber = webtoon.chapters.length - chapterIndex - 1
-
-    const chapterPath = `${chaptersPath}${chapNumber}_${chapterName}/`;
+    const chapterPath = `${chaptersPath}${dl.chapterNumber}_${chapterName}/`;
     if (!await RNFS.exists(chapterPath)) await RNFS.mkdir(chapterPath);
 
     const imagesPath = `${chapterPath}images/`;
     if (!await RNFS.exists(imagesPath)) await RNFS.mkdir(imagesPath);
 
-    const imagesUrls = await fetchChapterImageUrls(webtoon.chapters[chapterIndex]);
+    const imagesUrls = await fetchChapterImageUrls(dl.chapter);
 
     const totalImages = imagesUrls.length;
     let downloadedImages = 0;
@@ -65,8 +64,8 @@ export const handleDownload = async (webtoon: Webtoon, chapterIndex: number, set
     const downloadImageAndUpdateProgress = async (imageUrl: string, filePath: string) => {
         await downloadImage(imageUrl, filePath);
         downloadedImages++;
-        global.downloadingChapters[0].percentage = downloadedImages/totalImages;
-        global.downloadingChapters[0].setPercentage(downloadedImages/totalImages);
+        dl.percentage = downloadedImages/totalImages;
+        dl.setPercentage(downloadedImages/totalImages);
     };
 
     const downloadPromises = imagesUrls.map(async (imageUrl, j) => {
@@ -76,9 +75,9 @@ export const handleDownload = async (webtoon: Webtoon, chapterIndex: number, set
 
     await Promise.all(downloadPromises);
 
-    await RNFS.writeFile(chapterPath + "name", webtoon.chapters[chapterIndex].name);
+    await RNFS.writeFile(chapterPath + "name", dl.chapter.name);
 
-    global.downloadingChapters[0].setIsDownloaded(true);
+    dl.setIsDownloaded(true);
 
-    console.log(`Finished downloading chapter: ${webtoon.chapters[chapterIndex].name}`);
+    console.log(`Finished downloading chapter: ${dl.chapter.name}`);
 };
