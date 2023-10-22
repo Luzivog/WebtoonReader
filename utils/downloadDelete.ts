@@ -1,24 +1,24 @@
 import { downloadImage, sanitizeFileName, fetchChapterImageUrls, deleteFolderRecursive } from "./utils";
 import RNFS from 'react-native-fs';
 
-let isProcessing = false; // Track if the queue is currently being processed
+let isProcessing = false;
 
 export async function processQueue() {
-    if (isProcessing || global.downloadingQueue.length === 0) return; // Avoid parallel processing or processing an empty queue
+    if (isProcessing || global.downloadingQueue.length === 0) return;
 
-    isProcessing = true; // Set processing flag
+    isProcessing = true;
 
     try {
         while (global.downloadingQueue.length > 0) {
             console.log("Download queue length: ", global.downloadingQueue.length)
 
             const id = global.downloadingQueue[0];
-            await handleDownload(id); // Process the dequeued item
+            await handleDownload(id);
             global.downloadingQueue.shift();
             delete global.downloadingChapters[id];
         }
     } finally {
-        isProcessing = false; // Reset processing flag when queue is empty or an error occurred
+        isProcessing = false;
     }
 };
 
@@ -60,6 +60,7 @@ export const handleDownload = async (id: string) => {
 
     const totalImages = imagesUrls.length;
     let downloadedImages = 0;
+
 
     const downloadImageAndUpdateProgress = async (imageUrl: string, filePath: string) => {
         await downloadImage(imageUrl, filePath);

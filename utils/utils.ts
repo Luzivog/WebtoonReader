@@ -155,10 +155,10 @@ export async function deleteFolderRecursive(path: string) {
 export async function downloadImage(url: string, filePath: string): Promise<boolean> {
 	try {
 		const response = await RNFetchBlob.fetch('GET', url);
-
+		
 		if (response.respInfo.status === 200) {
 			const base64data = response.base64();
-			await RNFetchBlob.fs.writeFile(filePath, base64data, 'base64');
+			await RNFS.writeFile(filePath, base64data, 'base64');
 			return true;
 		} else {
 			console.log('Failed to fetch the image:', response.respInfo.status);
