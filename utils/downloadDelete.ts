@@ -3,6 +3,17 @@ import RNFS from 'react-native-fs';
 
 let isProcessing = false;
 
+/**
+ * processQueue manages the queue of chapters to be downloaded. 
+ * It ensures that downloads are processed sequentially, preventing multiple chapters 
+ * from being downloaded simultaneously. The function continually checks the global 
+ * downloadingQueue for pending downloads and initiates the download process for each 
+ * pending item by calling the handleDownload function.
+ * 
+ * @returns {Promise<void>} Returns a promise which resolves when all items in the
+ * downloadingQueue have been processed, or immediately if the queue is currently
+ * being processed or is empty.
+ */
 export async function processQueue() {
     if (isProcessing || global.downloadingQueue.length === 0) return;
 
@@ -10,8 +21,6 @@ export async function processQueue() {
 
     try {
         while (global.downloadingQueue.length > 0) {
-            console.log("Download queue length: ", global.downloadingQueue.length)
-
             const id = global.downloadingQueue[0];
             await handleDownload(id);
             global.downloadingQueue.shift();
@@ -48,7 +57,6 @@ export const handleDownload = async (id: string) => {
     if (!await RNFS.exists(chaptersPath)) await RNFS.mkdir(chaptersPath);
 
     const chapterName = sanitizeFileName(dl.chapter.name);
-    console.log(`Downloading chapter: ${chapterName}`);
 
     const chapterPath = `${chaptersPath}${dl.chapterNumber}_${chapterName}/`;
     if (!await RNFS.exists(chapterPath)) await RNFS.mkdir(chapterPath);
@@ -65,8 +73,8 @@ export const handleDownload = async (id: string) => {
     const downloadImageAndUpdateProgress = async (imageUrl: string, filePath: string) => {
         await downloadImage(imageUrl, filePath);
         downloadedImages++;
-        dl.percentage = downloadedImages/totalImages;
-        dl.setPercentage(downloadedImages/totalImages);
+        dl.percentage = downloadedImages / totalImages;
+        dl.setPercentage(downloadedImages / totalImages);
     };
 
     const downloadPromises = imagesUrls.map(async (imageUrl, j) => {
@@ -79,6 +87,4 @@ export const handleDownload = async (id: string) => {
     await RNFS.writeFile(chapterPath + "name", dl.chapter.name);
 
     dl.setIsDownloaded(true);
-
-    console.log(`Finished downloading chapter: ${dl.chapter.name}`);
 };

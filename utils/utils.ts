@@ -5,6 +5,12 @@ import RNFS from 'react-native-fs';
 import { defaultDetails, defaultImage, defaultTitle } from "./config";
 import RNFetchBlob from "rn-fetch-blob";
 
+
+/**
+ * Delays execution for a specified number of milliseconds.
+ * @param {number} ms - The number of milliseconds to delay execution.
+ * @returns {Promise<void>} A promise that resolves after the specified delay.
+ */
 export function delay(ms: number): Promise<void> {
 	return new Promise<void>(resolve => {
 		setTimeout(resolve, ms);
@@ -42,6 +48,13 @@ export async function loadMainWebtoons(): Promise<Webtoon[]> {
 	return mainWebtoons;
 }
 
+
+/**
+ * Updates the chapters of a given webtoon.
+ * @param {Webtoon} webtoon - The webtoon object to update.
+ * @param {HTMLElement} parsedHtml - The parsed HTML element from which chapter details will be extracted.
+ * @returns {Promise<void>} A promise that resolves once the chapters are updated.
+ */
 export async function updateWebtoonChapters(webtoon: Webtoon, parsedHtml: HTMLElement): Promise<void> {
 	const chaptersElements = parsedHtml.querySelectorAll('strong[class="chapter-title"]');
 	const chapterUrls = parsedHtml.querySelectorAll('li[data-chapterno]');
@@ -58,6 +71,12 @@ export async function updateWebtoonChapters(webtoon: Webtoon, parsedHtml: HTMLEl
 	webtoon.chapters = [...chapterDetails];
 }
 
+
+/**
+ * Fetches details of a specific webtoon and updates the webtoon object.
+ * @param {Webtoon} webtoon - The webtoon object to fetch details for and update.
+ * @returns {Promise<void>} A promise that resolves once the webtoon details are fetched and updated.
+ */
 export async function fetchWebtoonDetails(webtoon: Webtoon): Promise<void> {
 
 	const htmlDetails = await fetchHtmlRes('https://www.mangageko.com' + webtoon.apiUrl);
@@ -93,12 +112,24 @@ export async function fetchWebtoonDetails(webtoon: Webtoon): Promise<void> {
 	updateWebtoonChapters(webtoon, parsedDetails);
 }
 
+
+/**
+ * Fetches all chapters of a specific webtoon.
+ * @param {Webtoon} webtoon - The webtoon object for which to fetch all chapters.
+ * @returns {Promise<void>} A promise that resolves once all chapters are fetched.
+ */
 export async function fetchAllChapters(webtoon: Webtoon) {
 	const htmlDetails = await fetchHtmlRes('https://www.mangageko.com' + webtoon.apiUrl + 'all-chapters/');
 	const parsedDetails = parse(htmlDetails).removeWhitespace();
 	updateWebtoonChapters(webtoon, parsedDetails);
 }
 
+
+/**
+ * Fetches the image URLs of a specific chapter.
+ * @param {Chapter} chapter - The chapter object for which to fetch image URLs.
+ * @returns {Promise<any[]>} A promise that resolves to an array of image URLs.
+ */
 export async function fetchChapterImageUrls(chapter: Chapter): Promise<any[]> {
 
 	if (chapter.url == '') return [];
@@ -123,10 +154,22 @@ export async function fetchChapterImageUrls(chapter: Chapter): Promise<any[]> {
 	return imageUrls ? imageUrls : [];
 };
 
+
+/**
+ * Checks if an object is empty.
+ * @param {object} obj - The object to check.
+ * @returns {boolean} Returns true if the object is empty, false otherwise.
+ */
 export function isObjectEmpty(obj: { [key: string]: any }): boolean {
 	return Object.keys(obj).length === 0;
 };
 
+
+/**
+ * Sanitizes a file name by removing invalid characters.
+ * @param {string} fileName - The file name to sanitize.
+ * @returns {string} The sanitized file name.
+ */
 export function sanitizeFileName(fileName: string): string {
 
 	const invalidCharactersPattern = /[\/\\:*?"<>|]/g;
@@ -135,6 +178,12 @@ export function sanitizeFileName(fileName: string): string {
 	return sanitizedFileName;
 };
 
+
+/**
+ * Recursively deletes a folder and its contents.
+ * @param {string} path - The path to the folder to delete.
+ * @returns {Promise<void>} A promise that resolves once the folder and its contents are deleted.
+ */
 export async function deleteFolderRecursive(path: string) {
 	if (await RNFS.exists(path)) {
 		const files = await RNFS.readDir(path);
@@ -152,6 +201,12 @@ export async function deleteFolderRecursive(path: string) {
 };
 
 
+/**
+ * Downloads an image from a URL and saves it to a specified file path.
+ * @param {string} url - The URL of the image to download.
+ * @param {string} filePath - The file path where the downloaded image will be saved.
+ * @returns {Promise<boolean>} A promise that resolves to true if the image is successfully downloaded and saved, false otherwise.
+ */
 export async function downloadImage(url: string, filePath: string): Promise<boolean> {
 	try {
 		const response = await RNFetchBlob.fetch('GET', url);
@@ -171,6 +226,11 @@ export async function downloadImage(url: string, filePath: string): Promise<bool
 };
 
 
+/**
+ * Fetches downloaded chapters of a specific webtoon.
+ * @param {DownloadedWebtoonObject} webtoon - The downloaded webtoon object for which to fetch chapters.
+ * @returns {Promise<Chapter[]>} A promise that resolves to an array of chapter objects.
+ */
 export async function fetchDownloadedChapters(webtoon: DownloadedWebtoonObject): Promise<Chapter[]> {
 	const chaptersPath = `${RNFS.DocumentDirectoryPath}/downloads/${webtoon.formattedName}/chapters/`;
 	let filteredChapters: Chapter[] = [];
