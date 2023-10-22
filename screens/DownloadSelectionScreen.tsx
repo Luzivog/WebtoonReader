@@ -12,17 +12,25 @@ import React from "react";
 import CircleLoader from "./components/CircleLoader";
 import { processQueue } from "../utils/downloadDelete";
 import RNFS from "react-native-fs";
+import LoadingScreen from "./LoadingScreen";
 
-const RenderItem = ({ webtoon, item, index }: {
+function getChapterPath(webtoon: Webtoon, chapterName: string, index: number) {
+    const chapNumber = webtoon.chapters.length - index - 1;
+    const webtoonName = sanitizeFileName(webtoon.apiUrl.slice(1, -1).split("/").join("-"));
+    return `${RNFS.DocumentDirectoryPath}/downloads/${sanitizeFileName(webtoonName)}/chapters/${chapNumber}_${sanitizeFileName(chapterName)}/name`;
+};
+
+const RenderItem = ({ webtoon, item, index, downloaded }: {
     webtoon: Webtoon | DownloadedWebtoonObject,
     item: Chapter,
-    index: number
+    index: number,
+    downloaded: boolean
 }): JSX.Element => {
 
     const id = webtoon.name + item.name;
     const fetchedData = "imageUrl" in webtoon;
 
-    const [isDownloaded, setIsDownloaded] = useState(!(fetchedData));
+    const [isDownloaded, setIsDownloaded] = useState(downloaded);
     const [isDownloading, setIsDownloading] = useState<boolean>(!isDownloaded && (id in global.downloadingChapters));
 
     const [percentage, setPercentage] = useState(() => {
@@ -39,10 +47,7 @@ const RenderItem = ({ webtoon, item, index }: {
     useEffect(() => {
         if (fetchedData) {
             (async () => {
-                const chapNumber = webtoon.chapters.length - index - 1;
-                const webtoonName = sanitizeFileName(webtoon.apiUrl.slice(1, -1).split("/").join("-"));
-                const chaptersPath = `${RNFS.DocumentDirectoryPath}/downloads/${sanitizeFileName(webtoonName)}/chapters/${chapNumber}_${sanitizeFileName(item.name)}/name`;    
-                setIsDownloaded(await RNFS.exists(chaptersPath));
+                setIsDownloaded(await RNFS.exists(getChapterPath(webtoon, item.name, index)));
             })();
         };
     }, [isDownloaded]);
@@ -120,6 +125,7 @@ export default function DonwloadSelectionScreen({ navigation, route }: {
 
     const { webtoon, chapters }: { webtoon: Webtoon | DownloadedWebtoonObject, chapters: Chapter[] } = route.params;
     const [currentChapters, setChapters] = useState<Chapter[]>(chapters);
+    const [downloadedChapters, setDownloadedChapters] = useState<Set<string>>(new Set());
 
     useEffect(() => {
         (async () => {
@@ -129,12 +135,24 @@ export default function DonwloadSelectionScreen({ navigation, route }: {
                     await fetchAllChapters(webtoon);
                     webtoon.allChapters = true;
                 };
+                const downloadedChaps = new Set<string>();
+                for (let i = 0; i < webtoon.chapters.length; i++){
+                    const chapterPath = getChapterPath(webtoon, webtoon.chapters[i].name, i);
+                    if (await RNFS.exists(chapterPath)) downloadedChaps.add(webtoon.chapters[i].name);
+                };
+                setDownloadedChapters(downloadedChaps);
                 setChapters(webtoon.chapters);
-            } else if (chapters.length === 0) setChapters(await fetchDownloadedChapters(webtoon));
+            } else if (chapters.length === 0) {
+                const fetchedChapters = await fetchDownloadedChapters(webtoon);
+                const downloadedChaps = new Set<string>(fetchedChapters.map(c => c.name));
+                setDownloadedChapters(downloadedChaps);
+                setChapters(fetchedChapters);
+            };
         })();
     }, [currentChapters]);
 
-    return (
+    if (currentChapters.length === 0) return (<LoadingScreen/>)
+    else return (
         <ChapterList
             header={
                 <View style={styles.header}>
@@ -149,7 +167,13 @@ export default function DonwloadSelectionScreen({ navigation, route }: {
                 </View>
             }
             chapters={currentChapters}
-            renderItem={({ item, index }) => <RenderItem webtoon={webtoon} item={item} index={index!}/>}
+            renderItem={({ item, index }) =>
+                <RenderItem 
+                    webtoon={webtoon} 
+                    item={item} 
+                    index={index!} 
+                    downloaded={downloadedChapters.has(item.name)}
+                />}
             onPress={() => { }}
         />
     );
