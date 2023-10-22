@@ -45,18 +45,19 @@ export default function ChapterList({ chapters, header, onPress, renderItem=Rend
 }) {
 	return (
 		<View style={styles.chaptersContainer}>
-		<FlatList		
+		<FlashList		
 			data={chapters}
 			ListHeaderComponent={header}
 			renderItem={({ item: chapter, index }) => (
-				<>
+				<View key={chapter.name}>
 					{renderItem({
 						item: chapter,
 						index: index,
 						onPress: onPress,
 					})}
-				</>
+				</View>
 			)}
+			estimatedItemSize={60}
 		/>
 		</View>
 	)
