@@ -9,6 +9,7 @@ interface downloadingChapter {
     chapterNumber: number,
     setPercentage: React.Dispatch<React.SetStateAction<number>>,
     setIsDownloaded: React.Dispatch<React.SetStateAction<boolean>>,
+    setIsDownloading: React.Dispatch<React.SetStateAction<boolean>>,
     percentage: number
 }
 

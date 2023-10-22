@@ -29,7 +29,7 @@ const WebtoonDetailsScreen = ({ navigation, route }: {
 				webtoon.allChapters = true;
 			};
 			setChapters(webtoon.chapters);
-		} else setChapters(await fetchDownloadedChapters(webtoon));
+		} else if (chapters.length === 0) setChapters(await fetchDownloadedChapters(webtoon));
 		setIsLoading(false);
 		
 	}, [chapters]);

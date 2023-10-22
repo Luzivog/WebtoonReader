@@ -5,7 +5,7 @@ import { RouteProp } from '@react-navigation/native';
 import WebtoonStack from './WebtoonStack';
 
 export type DownloadedWebtoonObject = {
-    formattedName: string,
+    formattedName: string;
     name: string;
     summary: string;
 };

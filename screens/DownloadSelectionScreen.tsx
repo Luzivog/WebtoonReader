@@ -4,7 +4,7 @@ import { DownloadSelectionScreenNavigationProp, DownloadSelectionScreenRouteProp
 import { DownloadedWebtoonObject } from "../navigation/stacks/DownloadsStack";
 import ChapterList from "./components/ChapterList";
 import { useCallback, useEffect, useState } from "react";
-import { isObjectEmpty, fetchWebtoonDetails, fetchAllChapters, fetchDownloadedChapters, sanitizeFileName } from "../utils/utils";
+import { isObjectEmpty, fetchWebtoonDetails, fetchAllChapters, fetchDownloadedChapters, sanitizeFileName, deleteFolderRecursive } from "../utils/utils";
 import { vw } from "../utils/config";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { ScrollView } from "react-native-gesture-handler";
@@ -17,7 +17,7 @@ import LoadingScreen from "./LoadingScreen";
 function getChapterPath(webtoon: Webtoon, chapterName: string, index: number) {
     const chapNumber = webtoon.chapters.length - index - 1;
     const webtoonName = sanitizeFileName(webtoon.apiUrl.slice(1, -1).split("/").join("-"));
-    return `${RNFS.DocumentDirectoryPath}/downloads/${sanitizeFileName(webtoonName)}/chapters/${chapNumber}_${sanitizeFileName(chapterName)}/name`;
+    return `${RNFS.DocumentDirectoryPath}/downloads/${sanitizeFileName(webtoonName)}/chapters/${chapNumber}_${sanitizeFileName(chapterName)}/`;
 };
 
 const RenderItem = ({ webtoon, item, index, downloaded }: {
@@ -40,20 +40,22 @@ const RenderItem = ({ webtoon, item, index, downloaded }: {
 
     if (!isDownloaded && isDownloading) {
         let element = global.downloadingChapters[id];
-        element.setPercentage = setPercentage;
-        element.setIsDownloaded = setIsDownloaded;
+        if (element) {
+            element.setPercentage = setPercentage;
+            element.setIsDownloaded = setIsDownloaded;
+        };
     };
 
     useEffect(() => {
         if (fetchedData) {
             (async () => {
-                setIsDownloaded(await RNFS.exists(getChapterPath(webtoon, item.name, index)));
+                setIsDownloaded(await RNFS.exists(getChapterPath(webtoon, item.name, index)+"name"));
             })();
         };
     }, [isDownloaded]);
 
 
-    const handlePress = useCallback(() => {
+    const handleDownloadPress = useCallback(() => {
         if (fetchedData) {
             global.downloadingChapters[id] = {
                 webtoonApiUrl: webtoon.apiUrl,
@@ -64,6 +66,7 @@ const RenderItem = ({ webtoon, item, index, downloaded }: {
                 chapterNumber: webtoon.chapters.length - index - 1,
                 setPercentage: setPercentage,
                 setIsDownloaded: setIsDownloaded,
+                setIsDownloading: setIsDownloading,
                 percentage: 0
             };
             global.downloadingQueue.push(id);
@@ -71,6 +74,13 @@ const RenderItem = ({ webtoon, item, index, downloaded }: {
             processQueue();
         };
     }, [webtoon, item]);
+
+    const handleDeletePress = async () => {
+        let chapterPath = item.url;
+        if (fetchedData) chapterPath = getChapterPath(webtoon, item.name, index);
+        if (await RNFS.exists(chapterPath)) await deleteFolderRecursive(chapterPath);
+        setIsDownloaded(false);
+    };
 
     return (
         <View style={styles.line}>
@@ -93,21 +103,32 @@ const RenderItem = ({ webtoon, item, index, downloaded }: {
             </View>
 
             {
-                isDownloaded ? (
-                    <TouchableOpacity
-                        style={styles.iconContainer}
-                    >
-                        <Ionicons style={styles.downloadDeleteIcon} name="trash-outline" size={10 * vw} />
-                    </TouchableOpacity>
+                !fetchedData ? (
+                    isDownloaded ? (
+                        <TouchableOpacity
+                            style={styles.iconContainer}
+                            onPress={handleDeletePress}
+                        >
+                            <Ionicons style={styles.downloadDeleteIcon} name="trash-outline" size={10 * vw} />
+                        </TouchableOpacity>
+                    ) : (
+                        <View style={styles.iconContainer}>
+                            <Ionicons style={styles.checkmarkIcon} name="checkmark-circle-outline" size={10 * vw} />
+                        </View>
+                    )
                 ) : (
-                    isDownloading ? (
+                    isDownloaded ? (
+                        <View style={styles.iconContainer}>
+                            <Ionicons style={styles.checkmarkIcon} name="checkmark-circle-outline" size={10 * vw} />
+                        </View>
+                    ) : isDownloading ? (
                         <View style={styles.iconContainer}>
                             <CircleLoader size={28} percentage={percentage} />
                         </View>
                     ) : (
                         <TouchableOpacity
                             style={styles.iconContainer}
-                            onPress={handlePress}
+                            onPress={handleDownloadPress}
                         >
                             <Ionicons style={styles.downloadDeleteIcon} name="download-outline" size={10 * vw} />
                         </TouchableOpacity>
@@ -125,7 +146,7 @@ export default function DonwloadSelectionScreen({ navigation, route }: {
 
     const { webtoon, chapters }: { webtoon: Webtoon | DownloadedWebtoonObject, chapters: Chapter[] } = route.params;
     const [currentChapters, setChapters] = useState<Chapter[]>(chapters);
-    const [downloadedChapters, setDownloadedChapters] = useState<Set<string>>(new Set());
+    const [downloadedChapters, setDownloadedChapters] = useState<Set<string>>(new Set(chapters.map(c => c.name)));
 
     useEffect(() => {
         (async () => {
@@ -136,7 +157,7 @@ export default function DonwloadSelectionScreen({ navigation, route }: {
                     webtoon.allChapters = true;
                 };
                 const downloadedChaps = new Set<string>();
-                for (let i = 0; i < webtoon.chapters.length; i++){
+                for (let i = 0; i < webtoon.chapters.length; i++) {
                     const chapterPath = getChapterPath(webtoon, webtoon.chapters[i].name, i);
                     if (await RNFS.exists(chapterPath)) downloadedChaps.add(webtoon.chapters[i].name);
                 };
@@ -151,7 +172,7 @@ export default function DonwloadSelectionScreen({ navigation, route }: {
         })();
     }, [currentChapters]);
 
-    if (currentChapters.length === 0) return (<LoadingScreen/>)
+    if (currentChapters.length === 0) return (<LoadingScreen />)
     else return (
         <ChapterList
             header={
@@ -168,10 +189,10 @@ export default function DonwloadSelectionScreen({ navigation, route }: {
             }
             chapters={currentChapters}
             renderItem={({ item, index }) =>
-                <RenderItem 
-                    webtoon={webtoon} 
-                    item={item} 
-                    index={index!} 
+                <RenderItem
+                    webtoon={webtoon}
+                    item={item}
+                    index={index!}
                     downloaded={downloadedChapters.has(item.name)}
                 />}
             onPress={() => { }}
@@ -237,4 +258,8 @@ const styles = StyleSheet.create({
         color: "tomato",
         alignSelf: 'flex-end'
     },
+    checkmarkIcon: {
+        color: "grey",
+        alignSelf: 'flex-end'
+    }
 });

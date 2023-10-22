@@ -14,7 +14,7 @@ export type DownloadedWebtoonData = {
     formattedName: string,
     name: string;
     summary: string;
-    cover: string
+    cover: string;
 };
 
 function DownloadsScreen({ navigation }: {

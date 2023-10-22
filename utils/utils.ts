@@ -4,6 +4,7 @@ import { parse, HTMLElement } from 'node-html-parser';
 import RNFS from 'react-native-fs';
 import { defaultDetails, defaultImage, defaultTitle } from "./config";
 import RNFetchBlob from "rn-fetch-blob";
+import { JSDOM } from 'jsdom';
 
 
 /**
@@ -46,7 +47,7 @@ export async function loadMainWebtoons(): Promise<Webtoon[]> {
 	for (let i = 0; i < 24; i++) mainWebtoons.push(new Webtoon(names[i], imageUrls[i], apiUrls[i]));
 
 	return mainWebtoons;
-}
+};
 
 
 /**
@@ -135,10 +136,10 @@ export async function fetchChapterImageUrls(chapter: Chapter): Promise<any[]> {
 	if (chapter.url == '') return [];
 
 	if (chapter.released == '') {
-		const dirPath = chapter.url+'images/';
+		const dirPath = chapter.url + 'images/';
 		const chapterImages = (await RNFS.readDir(dirPath))
 			.map(f => ({
-				uri: `file://${dirPath+f.name}`,
+				uri: `file://${dirPath + f.name}`,
 				index: parseInt(f.name.replace('index_', '').split('.')[0])
 			}))
 			.sort((a, b) => a.index - b.index)
@@ -187,7 +188,6 @@ export function sanitizeFileName(fileName: string): string {
 export async function deleteFolderRecursive(path: string) {
 	if (await RNFS.exists(path)) {
 		const files = await RNFS.readDir(path);
-
 		for (const file of files) {
 			if (file.isDirectory()) {
 				await deleteFolderRecursive(file.path);
@@ -210,7 +210,7 @@ export async function deleteFolderRecursive(path: string) {
 export async function downloadImage(url: string, filePath: string): Promise<boolean> {
 	try {
 		const response = await RNFetchBlob.fetch('GET', url);
-		
+
 		if (response.respInfo.status === 200) {
 			const base64data = response.base64();
 			await RNFS.writeFile(filePath, base64data, 'base64');
@@ -246,10 +246,10 @@ export async function fetchDownloadedChapters(webtoon: DownloadedWebtoonObject):
 				} as Chapter;
 			}
 		});
-	
+
 		const chaptersResults = await Promise.all(chaptersPromises);
 		filteredChapters = chaptersResults.filter((chapter): chapter is Chapter => chapter !== undefined);
-	
+
 		filteredChapters.sort((a, b) => {
 			const indexA = parseInt(a.url.split('/').slice(-2)[0].split('_')[0], 10);
 			const indexB = parseInt(b.url.split('/').slice(-2)[0].split('_')[0], 10);

@@ -24,7 +24,6 @@ export async function processQueue() {
             const id = global.downloadingQueue[0];
             await handleDownload(id);
             global.downloadingQueue.shift();
-            delete global.downloadingChapters[id];
         }
     } finally {
         isProcessing = false;
@@ -43,6 +42,7 @@ export async function processQueue() {
 export const handleDownload = async (id: string) => {
 
     let dl = global.downloadingChapters[id];
+    if (dl === undefined) return;
 
     //await deleteFolderRecursive(RNFS.DocumentDirectoryPath + '/downloads/');
     const webtoonName = sanitizeFileName(dl.webtoonApiUrl.slice(1, -1).split("/").join("-"));
@@ -86,5 +86,7 @@ export const handleDownload = async (id: string) => {
 
     await RNFS.writeFile(chapterPath + "name", dl.chapter.name);
 
+    delete global.downloadingChapters[id];
+    dl.setIsDownloading(false);
     dl.setIsDownloaded(true);
 };
