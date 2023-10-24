@@ -1,4 +1,4 @@
-import { downloadImage, sanitizeFileName, fetchChapterImageUrls, deleteFolderRecursive } from "./utils";
+import { downloadImage, sanitizeFileName, fetchChapterImageUrls, deleteFolderRecursive, delay } from "./utils";
 import RNFS from 'react-native-fs';
 
 let isProcessing = false;
@@ -24,6 +24,7 @@ export async function processQueue() {
             const id = global.downloadingQueue[0];
             await handleDownload(id);
             global.downloadingQueue.shift();
+            await delay(5000);
         }
     } finally {
         isProcessing = false;
@@ -43,6 +44,8 @@ export const handleDownload = async (id: string) => {
 
     let dl = global.downloadingChapters[id];
     if (dl === undefined) return;
+
+    console.log("Started downloading:", global.downloadingChapters[id].chapter)
 
     //await deleteFolderRecursive(RNFS.DocumentDirectoryPath + '/downloads/');
     const webtoonName = sanitizeFileName(dl.webtoonApiUrl.slice(1, -1).split("/").join("-"));
@@ -85,6 +88,8 @@ export const handleDownload = async (id: string) => {
     await Promise.all(downloadPromises);
 
     await RNFS.writeFile(chapterPath + "name", dl.chapter.name);
+
+    console.log("Finished downloading:", global.downloadingChapters[id].chapter)
 
     delete global.downloadingChapters[id];
     dl.setIsDownloading(false);

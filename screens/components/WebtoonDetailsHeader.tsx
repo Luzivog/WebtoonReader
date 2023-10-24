@@ -9,7 +9,7 @@ import { vw } from '../../utils/config';
 import { DownloadedWebtoonObject } from "../../navigation/stacks/DownloadsStack";
 import FastImage from "react-native-fast-image";
 
-const handleReadChapter = () => {
+const handleReadChapterOne = () => {
     // Add logic to handle reading chapter 1
 };
 
@@ -25,7 +25,7 @@ const WebtoonDetailHeader = (
     isAuthOverlayVisible: boolean,
     setPopupVisible: (visible: boolean) => void,
     toggleAuthOverlay: (visible: boolean) => void,
-    chapters: Chapter[]
+    chapters: Chapter[],
 
 ) => {
     
@@ -68,7 +68,7 @@ const WebtoonDetailHeader = (
                         )}
                             <View style={styles.buttonContainer}>
 
-                                <TouchableOpacity style={styles.button} onPress={handleReadChapter}>
+                                <TouchableOpacity style={styles.button} onPress={handleReadChapterOne}>
                                     <Text style={styles.buttonText}>Read Chapter 1</Text>
                                 </TouchableOpacity>
 

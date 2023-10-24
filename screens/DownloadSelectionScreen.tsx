@@ -14,10 +14,14 @@ import { processQueue } from "../utils/downloadDelete";
 import RNFS from "react-native-fs";
 import LoadingScreen from "./LoadingScreen";
 
+function getWebtoonPath(webtoon: Webtoon) {
+    const webtoonName = sanitizeFileName(webtoon.apiUrl.slice(1, -1).split("/").join("-"));
+    return `${RNFS.DocumentDirectoryPath}/downloads/${sanitizeFileName(webtoonName)}/`;
+};
+
 function getChapterPath(webtoon: Webtoon, chapterName: string, index: number) {
     const chapNumber = webtoon.chapters.length - index - 1;
-    const webtoonName = sanitizeFileName(webtoon.apiUrl.slice(1, -1).split("/").join("-"));
-    return `${RNFS.DocumentDirectoryPath}/downloads/${sanitizeFileName(webtoonName)}/chapters/${chapNumber}_${sanitizeFileName(chapterName)}/`;
+    return getWebtoonPath(webtoon)+`chapters/${chapNumber}_${sanitizeFileName(chapterName)}/`;
 };
 
 const RenderItem = ({ webtoon, item, index, downloaded }: {
@@ -31,7 +35,7 @@ const RenderItem = ({ webtoon, item, index, downloaded }: {
     const fetchedData = "imageUrl" in webtoon;
 
     const [isDownloaded, setIsDownloaded] = useState(downloaded);
-    const [isDownloading, setIsDownloading] = useState<boolean>(!isDownloaded && (id in global.downloadingChapters));
+    const [isDownloading, setIsDownloading] = useState<boolean>(id in global.downloadingChapters);
 
     const [percentage, setPercentage] = useState(() => {
         if (isDownloaded || !isDownloading) return 0;
@@ -42,6 +46,7 @@ const RenderItem = ({ webtoon, item, index, downloaded }: {
         let element = global.downloadingChapters[id];
         if (element) {
             element.setPercentage = setPercentage;
+            element.setIsDownloading = setIsDownloading;
             element.setIsDownloaded = setIsDownloaded;
         };
     };
@@ -77,9 +82,18 @@ const RenderItem = ({ webtoon, item, index, downloaded }: {
 
     const handleDeletePress = async () => {
         let chapterPath = item.url;
-        if (fetchedData) chapterPath = getChapterPath(webtoon, item.name, index);
+        let webtoonPath = "";
+        if (fetchedData) {
+            chapterPath = getChapterPath(webtoon, item.name, index);
+            webtoonPath = getWebtoonPath(webtoon);
+        } else {
+            webtoonPath = `${RNFS.DocumentDirectoryPath}/downloads/${webtoon.formattedName}/`
+        };
         if (await RNFS.exists(chapterPath)) await deleteFolderRecursive(chapterPath);
         setIsDownloaded(false);
+        if (await RNFS.exists(webtoonPath+'chapters/')
+            && (await RNFS.readDir(webtoonPath+'chapters/')).length === 0
+        ) await deleteFolderRecursive(webtoonPath);
     };
 
     return (

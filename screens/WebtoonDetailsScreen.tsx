@@ -6,7 +6,7 @@ import LoadingScreen from './LoadingScreen';
 import Webtoon, { Chapter } from '../utils/Webtoon';
 import ChapterList from './components/ChapterList';
 import { DownloadedWebtoonObject } from '../navigation/stacks/DownloadsStack';
-import RNFS from 'react-native-fs';
+import { useIsFocused } from '@react-navigation/native';
 
 const WebtoonDetailsScreen = ({ navigation, route }: {
 	navigation: WebtoonDetailsScreenNavigationProp,
@@ -14,13 +14,14 @@ const WebtoonDetailsScreen = ({ navigation, route }: {
 }) => {
 
 	const { webtoon }: { webtoon: Webtoon | DownloadedWebtoonObject } = route.params;
+	const isFocused = useIsFocused();
 	const [isLoading, setIsLoading] = useState(true);
 	const [isPopupVisible, setPopupVisible] = useState(false);
 	const [isAuthOverlayVisible, toggleAuthOverlay] = useState(false);
 	const [chapters, setChapters] = useState<Chapter[]>([]);
 
-	const fetchDetails = useCallback(async () => {
-
+	const fetchDetails = async () => {
+		console.log("hoi")
 		if ('imageUrl' in webtoon) {
 			setChapters(webtoon.chapters);
 			if (isObjectEmpty(webtoon.details)) await fetchWebtoonDetails(webtoon);
@@ -29,14 +30,17 @@ const WebtoonDetailsScreen = ({ navigation, route }: {
 				webtoon.allChapters = true;
 			};
 			setChapters(webtoon.chapters);
-		} else if (chapters.length === 0) setChapters(await fetchDownloadedChapters(webtoon));
+		} else if (isLoading) setChapters(await fetchDownloadedChapters(webtoon));
 		setIsLoading(false);
 		
-	}, [chapters]);
+	};
 
 	useEffect(() => {
-		fetchDetails();
-	}, [chapters]);
+		setIsLoading(true);
+		if (isFocused) {
+			fetchDetails()
+		};
+	}, [isFocused]);
 
 	if (isLoading) return <LoadingScreen />;
 
