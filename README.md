@@ -11,7 +11,7 @@ This project is a full stack mobile application to read webtoons. The current mo
 
 <u>Back end</u>: [Node.js](https://nodejs.org/en), [MongoDB](https://www.mongodb.com/fr-fr)
 
-## 💡 Encountered Technical Challenges
+## 💡 Technical Challenges Encountered
 
 The chapter images are high resolution images with unsual dimensions (8000x1000). Fetching them and displaying them as fast as possible so that the user doesn't disconnect from the story he's reading is a crutial requirement. Being myself a webtoon adept, there's nothing more frustrating than scrolling and seeing the images flash as they load during an epic scene. 
 
