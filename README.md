@@ -1,7 +1,5 @@
 # Webtoon Reader
 
-This application is still under development, soon available on playstore & appstore 💻
-
 ## 🤔 What is this ?
 
 This project is a full stack mobile application to read webtoons. The current most popular webtoon reading application ([WEBTOON](https://www.webtoons.com/en/)) is missing a lot of famous webtoons. Therefore I decided to create my own in order to fetch webtoons myself from different websites that do not have a mobile application, increasing the choice for the users.
